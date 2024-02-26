@@ -25,6 +25,24 @@ func Setup(mode string) *gin.Engine {
 		{
 			authGroup.POST("/signup", controller.SignUpHandler)
 			authGroup.POST("/login", controller.LoginHandler)
+			// 下面是新增的
+			authGroup.POST("/signup/phone/exist", nil)
+			authGroup.POST("/signup/email/exist", nil)
+			authGroup.POST("/signup/phone", nil)
+			authGroup.POST("/signup/email", nil)
+			// 验证码相关
+			authGroup.GET("/code/captcha", nil)
+			authGroup.POST("/code/phone", nil)
+			authGroup.POST("/code/email", nil)
+
+			// 登录相关
+			authGroup.POST("/login/phone", nil)
+			authGroup.POST("/login/email", nil)
+			authGroup.POST("/login/referesh-token", nil)
+
+			// 重置密码
+			authGroup.POST("/password/phone", nil)
+			authGroup.POST("/password/email", nil)
 		}
 
 		// 后面的所有请求都需要使用这个中间件，即需要验证是否进行了登陆
@@ -38,25 +56,37 @@ func Setup(mode string) *gin.Engine {
 					"msg": "没问题",
 				})
 			})
+			usersGroup.PUT("", nil) // 更新用户信息
+			usersGroup.PUT("/email", nil)
+			usersGroup.PUT("/phone", nil)
+			usersGroup.PUT("/password", nil)
+			usersGroup.PUT("/avatar", nil) // 更新头像
 		}
 
 		commGroup := v1.Group("/community")
 		{
-			commGroup.GET("/", controller.CommunityHandler)
+			commGroup.POST("", nil)
+			commGroup.GET("", controller.CommunityHandler)
 			commGroup.GET("/:id", controller.CommunityDetailHandler)
+			commGroup.PUT("/:id", nil)
+			commGroup.DELETE("/:id", nil)
 		}
 
 		postGroup := v1.Group("/post")
 		{
-
-			postGroup.POST("/", controller.CreatePostHandler)
+			postGroup.POST("", controller.CreatePostHandler)
 			postGroup.GET("/:id", controller.GetPostHandler)
 			postGroup.GET("/posts", controller.GetPostListHandler)
 			postGroup.GET("/posts2", controller.GetPostListHandler0)
 			postGroup.POST("/vote", controller.PostVoteHandler)
 			postGroup.GET("/posts3", controller.GetPostListHandler0)
+
+			postGroup.PUT("/:id", nil)
+			postGroup.DELETE("/:id", nil)
 		}
 	}
+
+	// 后面再考虑友情链接吧
 
 	r.GET("/", func(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "OK")

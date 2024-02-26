@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/xiaorui/web_app/controller"
-	"github.com/xiaorui/web_app/pkg/snowflake"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/xiaorui/web_app/controller"
+	"github.com/xiaorui/web_app/pkg/snowflake"
 
 	"github.com/xiaorui/web_app/dao/mysql"
 	"github.com/xiaorui/web_app/dao/redis"
@@ -21,8 +22,8 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Please set your config file!")
-		return
+		os.Args = append(os.Args, "conf/config.yaml")
+		// fmt.Println("Please set your config file!")
 	}
 
 	//1. 加载配置文件
