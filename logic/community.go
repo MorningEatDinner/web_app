@@ -10,7 +10,7 @@ func GetCommunityList() ([]*models.Community, error) {
 	return mysql.GetCommunityList()
 }
 
-func GetCommunityDetail(communityID int64) (*models.CommunityDetail, error) {
+func GetCommunityDetail(communityID int64) (*models.Community, error) {
 	//这个函数处理的逻辑就是根据id去数据库中查询数据
 	return mysql.GetCommunityDetailByID(communityID)
 }

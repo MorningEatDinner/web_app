@@ -1,11 +1,12 @@
 package controller
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/xiaorui/web_app/logic"
 	"github.com/xiaorui/web_app/models"
 	"go.uber.org/zap"
-	"strconv"
 )
 
 func CreatePostHandler(ctx *gin.Context) {
@@ -43,7 +44,6 @@ func GetPostHandler(ctx *gin.Context) {
 		ResponseError(ctx, CodeInvalidParam)
 		return
 	}
-
 	//2. 处理业务逻辑， 也就是从数据库中获取数据
 	data, err := logic.GetPostByID(pid)
 	if err != nil {
@@ -142,6 +142,7 @@ func GetPostListHandler0(ctx *gin.Context) {
 		ResponseError(ctx, CodeInvalidParam)
 		return
 	}
+	// zap.L().Info("param", zap.Any("param", p))
 
 	//处理业务逻辑
 	data, err := logic.GetPostList0(p)

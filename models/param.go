@@ -38,3 +38,7 @@ type ParamPostList struct {
 	Size        int64  `json:"size" form:"size"`
 	Order       string `json:"order" form:"order"`
 }
+
+type ParamPhoneExist struct {
+	Phone string `json:"phone,omitempty" valid:"phone"`
+}

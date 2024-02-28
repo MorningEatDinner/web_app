@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh"
@@ -12,6 +13,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
 	zhTranslations "github.com/go-playground/validator/v10/translations/zh"
+	"github.com/thedevsaddam/govalidator"
 )
 
 // 定义一个全局翻译器T
@@ -118,4 +120,58 @@ func removeTopStruct(fields map[string]string) map[string]string {
 		res[field[strings.Index(field, ".")+1:]] = err
 	}
 	return res
+}
+
+type ValidatorFunc func(interface{}, *gin.Context) map[string][]string
+
+func Validate(ctx *gin.Context, obj interface{}, handler ValidatorFunc) bool {
+	if err := ctx.ShouldBind(obj); err != nil {
+		// 参数解析失败
+		//ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
+		//	"error": err.Error(),
+		//})
+		BadRequest(ctx, err, "请求解析错误，请确认请求格式是否正确。上传文件请使用 multipart 标头，参数请使用 JSON 格式。")
+		// 打印错误信息
+		fmt.Println(err.Error())
+		// 错误之后中断请求
+		return false
+	}
+	// 绑定验证器
+	errs := handler(obj, ctx)
+	if len(errs) > 0 {
+		// 验证失败
+		//ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
+		//	"errors": errs,
+		//})
+		ValidationError(ctx, errs) // 如果参数解析失败， 直接在这里返回响应
+		return false
+	}
+
+	return true
+}
+
+// ValidateSignupPhoneExist：验证器函数， 验证数据是否符合要求
+func ValidateSignupPhoneExist(data interface{}, ctx *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"phone": []string{"required", "digits:11"}, // 定义每个字段需要满足的规则是什么
+	}
+	messages := govalidator.MapData{
+		"phone": []string{
+			"required:手机号为必填项，参数名称 phone", // 如果不满足这个字段的要求， 那么会返回这个信息
+			"digits:手机号长度必须为 11 位的数字",
+		},
+	}
+
+	return validate(data, rules, messages)
+}
+
+// validate：根据规则对于传输进来的数据进行验证
+func validate(data interface{}, rules, messages govalidator.MapData) map[string][]string {
+	opts := govalidator.Options{
+		Data:          data,     // 请求验证的结构
+		Rules:         rules,    // 加入这个tag需要满足什么功能
+		Messages:      messages, // 如果错误需要返回的信息是什么
+		TagIdentifier: "valid",  // 在结构体中的tag是什么
+	}
+	return govalidator.New(opts).ValidateStruct()
 }

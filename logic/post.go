@@ -107,6 +107,7 @@ func GetPostList2(p *models.ParamPostList) (data []*models.ApiPostDetail2, err e
 	if err != nil {
 		return nil, err
 	}
+
 	//2. 根据列表从数据库中得到post的详细信息
 	posts, err := mysql.GetPostListByIDs(pidList)
 	if err != nil {

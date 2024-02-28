@@ -26,7 +26,7 @@ func Setup(mode string) *gin.Engine {
 			authGroup.POST("/signup", controller.SignUpHandler)
 			authGroup.POST("/login", controller.LoginHandler)
 			// 下面是新增的
-			authGroup.POST("/signup/phone/exist", nil)
+			authGroup.POST("/signup/phone/exist", controller.IsPhoneExist)
 			authGroup.POST("/signup/email/exist", nil)
 			authGroup.POST("/signup/phone", nil)
 			authGroup.POST("/signup/email", nil)
@@ -86,7 +86,7 @@ func Setup(mode string) *gin.Engine {
 		}
 	}
 
-	// 后面再考虑友情链接吧
+	// TODO: 后面再考虑友情链接吧
 
 	r.GET("/", func(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "OK")

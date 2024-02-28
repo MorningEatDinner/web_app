@@ -52,3 +52,8 @@ func Login(p *models.ParamLogin) (user *models.User, err error) {
 	user.Token = token
 	return
 }
+
+// IsPhoneExist：返回输入手机号码是否存在数据表中
+func IsPhoneExist(phone string) (error, bool) {
+	return mysql.IsPhoneExist(phone)
+}

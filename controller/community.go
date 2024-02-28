@@ -1,10 +1,11 @@
 package controller
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/xiaorui/web_app/logic"
 	"go.uber.org/zap"
-	"strconv"
 )
 
 func CommunityHandler(ctx *gin.Context) {
