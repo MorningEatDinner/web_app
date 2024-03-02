@@ -27,4 +27,17 @@ redis:
   db: 0
   password: ""
   pool_size: 100
-  
+sms:
+  access_key_id: "LTAI5tPwvMk5i8awJ8FYVFna"
+  access_key_secret: "CwkyEXufERWUchvB3yRG1G6I2LYint"
+  sign_name: "阿里云短信测试"
+  template_code: "SMS_154950909"
+email:
+  smtp:
+    host: "localhost"
+    port: 1028
+    username: ""
+    password: ""
+  from:
+    address:  "webapp@example.com"
+    name: "webapp"

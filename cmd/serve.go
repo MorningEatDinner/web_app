@@ -3,15 +3,16 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/xiaorui/web_app/routes"
-	"github.com/xiaorui/web_app/settings"
-	"go.uber.org/zap"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/spf13/cobra"
+	"github.com/xiaorui/web_app/routes"
+	"github.com/xiaorui/web_app/settings"
+	"go.uber.org/zap"
 )
 
 var CmdServe = &cobra.Command{

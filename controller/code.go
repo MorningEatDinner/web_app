@@ -13,18 +13,22 @@ const (
 	CodeNeedAuth
 	CodeInvalidToken
 	CodeNeedLogin
+	CodePhoneCodeSendError
+	CodeEmailCodeSendError
 )
 
 var codeMsgMap = map[ResCode]string{
-	CodeSuccess:         "success",
-	CodeInvalidParam:    "去请求参数错误",
-	CodeUserExist:       "用户已经存在",
-	CodeUserNotExist:    "用户不存在",
-	CodeInvalidPassword: "密码错误",
-	CodeServerBusy:      "系统繁忙",
-	CodeNeedAuth:        "需要登陆",
-	CodeInvalidToken:    "无效认证",
-	CodeNeedLogin:       "当前未登录",
+	CodeSuccess:            "success",
+	CodeInvalidParam:       "去请求参数错误",
+	CodeUserExist:          "用户已经存在",
+	CodeUserNotExist:       "用户不存在",
+	CodeInvalidPassword:    "密码错误",
+	CodeServerBusy:         "系统繁忙",
+	CodeNeedAuth:           "需要登陆",
+	CodeInvalidToken:       "无效认证",
+	CodeNeedLogin:          "当前未登录",
+	CodePhoneCodeSendError: "短信发送失败",
+	CodeEmailCodeSendError: "邮件发送失败",
 }
 
 func (c ResCode) Msg() string {

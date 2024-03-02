@@ -73,7 +73,16 @@ func GetUserByID(id int64) (user *models.User, err error) {
 }
 
 // IsPhoneExist： 验证手机号是否已经注册了
-func IsPhoneExist(phone string) (error, bool) {
+func IsPhoneExist(phone string) (bool, error) {
 	// db.Model(&models.User{}).Where("")
-	return nil, true
+	var count int64
+	err := DB.Model(&models.User{}).Where("phone = ?", phone).Count(&count).Error
+	return count > 0, err
+}
+
+// IsEmailExist: 验证邮箱是否注册了
+func IsEmailExist(email string) (bool, error) {
+	var count int64
+	err := DB.Model(&models.User{}).Where("email = ?", email).Count(&count).Error
+	return count > 0, err
 }

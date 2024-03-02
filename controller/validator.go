@@ -2,6 +2,8 @@ package controller
 
 import (
 	"fmt"
+	"github.com/xiaorui/web_app/models"
+	"github.com/xiaorui/web_app/pkg/captcha"
 	"reflect"
 	"strings"
 
@@ -163,6 +165,93 @@ func ValidateSignupPhoneExist(data interface{}, ctx *gin.Context) map[string][]s
 	}
 
 	return validate(data, rules, messages)
+}
+
+// ValidateSignupEmailExist：验证器函数， 验证数据是否符合要求
+func ValidateSignupEmailExist(data interface{}, ctx *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"email": []string{"required", "min:4", "max:30", "email"}, // 定义每个字段需要满足的规则是什么
+	}
+	messages := govalidator.MapData{
+		"email": []string{
+			"required:Email 为必填项",
+			"min:Email 长度需大于 4",
+			"max:Email 长度需小于 30",
+			"email:Email 格式不正确，请提供有效的邮箱地址",
+		},
+	}
+
+	return validate(data, rules, messages)
+}
+
+func ValidatePhoneCodeRequest(data interface{}, ctx *gin.Context) map[string][]string {
+	// 1. 规则
+	rules := govalidator.MapData{
+		"phone":          []string{"required", "digits:11"},
+		"captcha_id":     []string{"required"},
+		"captcha_answer": []string{"required", "digits:6"},
+	}
+	// 2. 错误信息
+	messages := govalidator.MapData{
+		"phone": []string{
+			"required:手机号为必填项，参数名称 phone",
+			"digits:手机号长度必须为 11 位的数字",
+		},
+		"captcha_id": []string{
+			"required:图片验证码的 ID 为必填",
+		},
+		"captcha_answer": []string{
+			"required:图片验证码答案必填",
+			"digits:图片验证码长度必须为 6 位的数字",
+		},
+	}
+	// 3. 验证数据
+	errs := validate(data, rules, messages)
+	// 验证图片验证码有没有问题
+	_data := data.(*models.ParamPhoneCode)
+	errs = ValidateCaptcha(_data.CaptchaID, _data.CaptchaAnswer, errs)
+
+	return errs
+}
+
+func ValidateEmailCodeRequest(data interface{}, ctx *gin.Context) map[string][]string {
+	// 1. 规则
+	rules := govalidator.MapData{
+		"email":          []string{"required", "min:4", "max:30", "email"},
+		"captcha_id":     []string{"required"},
+		"captcha_answer": []string{"required", "digits:6"},
+	}
+	// 2. 错误信息
+	messages := govalidator.MapData{
+		"email": []string{
+			"required:Email 为必填项",
+			"min:Email 长度需大于 4",
+			"max:Email 长度需小于 30",
+			"email:Email 格式不正确，请提供有效的邮箱地址",
+		},
+		"captcha_id": []string{
+			"required:图片验证码的 ID 为必填",
+		},
+		"captcha_answer": []string{
+			"required:图片验证码答案必填",
+			"digits:图片验证码长度必须为 6 位的数字",
+		},
+	}
+	// 3. 验证数据
+	errs := validate(data, rules, messages)
+
+	// 验证图形验证码是否正确
+	_data := data.(*models.ParamEmailCode)
+	errs = ValidateCaptcha(_data.CaptchaID, _data.CaptchaAnswer, errs)
+
+	return errs
+}
+
+func ValidateCaptcha(captchaID, captchaAnswer string, errs map[string][]string) map[string][]string {
+	if ok := captcha.NewCaptcha().VerifyCaptcha(captchaID, captchaAnswer); !ok {
+		errs["captcha_answer"] = append(errs["captcha_answer"], "图片验证码错误")
+	}
+	return errs
 }
 
 // validate：根据规则对于传输进来的数据进行验证

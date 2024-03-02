@@ -19,6 +19,8 @@ type AppConfig struct {
 	*LogConfig   `mapstructure:"log"`
 	*MySQLConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`
+	*SmsConfig   `mapstructure:"sms"`
+	*EmailConfig `mapstructure:"email"`
 }
 
 type LogConfig struct {
@@ -45,6 +47,30 @@ type RedisConfig struct {
 	DB       int    `mapstructure:"db"`
 	Password string `mapstructure:"password"`
 	PoolSize int    `mapstructure:"pool_size"`
+}
+
+type SmsConfig struct {
+	AccessKeyID     string `mapstructure:"access_key_id"`
+	AccessKeySecret string `mapstructure:"access_key_secret"`
+	SignName        string `mapstructure:"sign_name"`
+	TemplateCode    string `mapstructure:"template_code"`
+}
+
+type EmailConfig struct {
+	*SmptConfig `mapstructure:"smtp"`
+	*FromConfig `mapstructure:"from"`
+}
+
+type SmptConfig struct {
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+}
+
+type FromConfig struct {
+	Address string `mapstructure:"address"`
+	Name    string `mapstructure:"name"`
 }
 
 func Init(filename string) (err error) {

@@ -23,17 +23,21 @@ func Setup(mode string) *gin.Engine {
 		authGroup := v1.Group("/auth")
 		// 注册业务路由
 		{
+			// 这是旧的注册方式， 后面不使用了
 			authGroup.POST("/signup", controller.SignUpHandler)
 			authGroup.POST("/login", controller.LoginHandler)
 			// 下面是新增的
 			authGroup.POST("/signup/phone/exist", controller.IsPhoneExist)
-			authGroup.POST("/signup/email/exist", nil)
+			authGroup.POST("/signup/email/exist", controller.IsEmailExist)
+
+			// 验证码相关
+			authGroup.GET("/code/captcha", controller.GetCaptcha)
+			authGroup.POST("/code/phone", controller.SendPhoneCode)
+			authGroup.POST("/code/email", controller.SendEmailCode)
+
+			// 使用手机或者邮箱进行注册
 			authGroup.POST("/signup/phone", nil)
 			authGroup.POST("/signup/email", nil)
-			// 验证码相关
-			authGroup.GET("/code/captcha", nil)
-			authGroup.POST("/code/phone", nil)
-			authGroup.POST("/code/email", nil)
 
 			// 登录相关
 			authGroup.POST("/login/phone", nil)

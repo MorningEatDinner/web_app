@@ -45,13 +45,11 @@ func main() {
 				fmt.Printf("init mysql failed, err:%v", err)
 				return
 			}
-			defer mysql.Close()
 			//4 初始化redis
 			if err := redis.Init(settings.Conf.RedisConfig); err != nil {
 				fmt.Printf("init redis failed, err:%v", err)
 				return
 			}
-			defer redis.Close()
 
 			//初始化雪花算法， 用于创建用户id
 			if err := snowflake.Init(settings.Conf.StartTime, settings.Conf.MachineID); err != nil {
@@ -66,6 +64,8 @@ func main() {
 			}
 		},
 	}
+	defer mysql.Close()
+	defer redis.Close()
 
 	// 注册子命令
 	rootCmd.AddCommand(

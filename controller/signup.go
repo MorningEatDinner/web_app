@@ -8,6 +8,7 @@ import (
 	"github.com/xiaorui/web_app/dao/mysql"
 	"github.com/xiaorui/web_app/logic"
 	"github.com/xiaorui/web_app/models"
+	"github.com/xiaorui/web_app/pkg/captcha"
 	"go.uber.org/zap"
 )
 
@@ -73,13 +74,88 @@ func IsPhoneExist(ctx *gin.Context) {
 		return
 	}
 	// 2. 处理业务逻辑
-	if err, _ := logic.IsPhoneExist(p.Phone); err != nil {
+	var exist bool
+	var err error
+	if exist, err = logic.IsPhoneExist(p.Phone); err != nil {
 		zap.L().Error("logic.IsPhoneExist failed.. ", zap.Error(err))
 		return
 	}
 
 	// 3. 返回响应
 	JSON(ctx, gin.H{
-		"exist": "测试",
+		"exist": exist,
 	})
+}
+
+// IsEmailExist: 验证邮箱是否存在
+func IsEmailExist(ctx *gin.Context) {
+	//1. 验证参数， 验证手机号是否正确
+	p := new(models.ParamEmailExist)
+	if ok := Validate(ctx, p, ValidateSignupEmailExist); !ok {
+		// 如果参数解析失败
+		return
+	}
+	// 2. 处理业务逻辑
+	var exist bool
+	var err error
+	if exist, err = logic.IsEmailExist(p.Email); err != nil {
+		zap.L().Error("logic.IsEmailExist failed.. ", zap.Error(err))
+		return
+	}
+
+	// 3. 返回响应
+	JSON(ctx, gin.H{
+		"exist": exist,
+	})
+}
+
+// GetCaptcha: 获取图形验证码
+func GetCaptcha(ctx *gin.Context) {
+	// 1. 进行参数验证
+
+	// 2. 进行业务处理：生成验证码
+	id, b64s, _, err := captcha.NewCaptcha().GenerateCaptcha()
+	if err != nil {
+		zap.L().Error("GenerateCaptcha failed..", zap.Error(err))
+	}
+
+	JSON(ctx, gin.H{
+		"captcha_id":    id,
+		"captcha_image": b64s,
+	})
+}
+
+// SendPhoneCode: 给制定号码发送验证码
+func SendPhoneCode(ctx *gin.Context) {
+	// 1. 验证参数
+	p := new(models.ParamPhoneCode)
+	if ok := Validate(ctx, p, ValidatePhoneCodeRequest); !ok {
+		return
+	}
+	// 2. 进行业务处理：发送验证码， 保存验证码
+	if err := logic.SendPhoneCode(p.Phone); err != nil {
+		zap.L().Error("send phone code failed..", zap.Error(err))
+		ResponseError(ctx, CodePhoneCodeSendError)
+		return
+	}
+	// 3. 返回响应
+	ResponseSuccess(ctx, nil)
+}
+
+// SendEmailCode: 给指定邮箱发送验证码
+func SendEmailCode(ctx *gin.Context) {
+	// 1. 验证参数
+	p := new(models.ParamEmailCode)
+	if ok := Validate(ctx, p, ValidateEmailCodeRequest); !ok {
+		return
+	}
+
+	// 2. 业务逻辑：发送验证码给指定邮箱
+	if err := logic.SendEmailCode(p.Email); err != nil {
+		zap.L().Error("send email code failed..", zap.Error(err))
+		ResponseError(ctx, CodeEmailCodeSendError)
+		return
+	}
+	//3. 返回响应
+	ResponseSuccess(ctx, nil)
 }

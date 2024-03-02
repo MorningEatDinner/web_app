@@ -42,3 +42,19 @@ type ParamPostList struct {
 type ParamPhoneExist struct {
 	Phone string `json:"phone,omitempty" valid:"phone"`
 }
+
+type ParamEmailExist struct {
+	Email string `json:"email,omitempty" valid:"email"`
+}
+
+type ParamPhoneCode struct {
+	CaptchaID     string `json:"captcha_id,omitempty" valid:"captcha_id"`
+	CaptchaAnswer string `json:"captcha_answer,omitempty" valid:"captcha_answer"`
+	Phone         string `json:"phone,omitempty" valid:"phone"`
+}
+
+type ParamEmailCode struct {
+	CaptchaID     string `json:"captcha_id,omitempty" valid:"captcha_id"`
+	CaptchaAnswer string `json:"captcha_answer,omitempty" valid:"captcha_answer"`
+	Email         string `json:"email,omitempty" valid:"email"`
+}
