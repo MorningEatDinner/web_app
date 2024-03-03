@@ -58,3 +58,11 @@ type ParamEmailCode struct {
 	CaptchaAnswer string `json:"captcha_answer,omitempty" valid:"captcha_answer"`
 	Email         string `json:"email,omitempty" valid:"email"`
 }
+
+type ParamSignupUsingPhone struct {
+	Phone           string `json:"phone,omitempty" valid:"phone"`
+	Code            string `json:"code,omitempty" valid:"verify_code"`
+	Name            string `json:"name" valid:"name"`
+	Password        string `json:"password" valid:"password"`
+	PasswordConfirm string `json:"password_confirm" valid:"password_confirm"`
+}

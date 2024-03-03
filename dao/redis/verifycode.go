@@ -8,3 +8,9 @@ func SetVerifyCode(phone, code string) error {
 
 	return RDB.Client.Set(RDB.Context, getRedisKey(KeyVerifyCode)+phone, code, expireTime).Err()
 }
+
+// CheckVerifyCode： 验证验证是否正确
+func CheckVerifyCode(key, answer string) bool {
+	val := RDB.Client.Get(RDB.Context, getRedisKey(KeyVerifyCode)+key).Val()
+	return val == answer
+}

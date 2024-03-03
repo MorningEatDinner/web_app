@@ -36,7 +36,7 @@ func Setup(mode string) *gin.Engine {
 			authGroup.POST("/code/email", controller.SendEmailCode)
 
 			// 使用手机或者邮箱进行注册
-			authGroup.POST("/signup/phone", nil)
+			authGroup.POST("/signup/phone", controller.SignupUsingPhone)
 			authGroup.POST("/signup/email", nil)
 
 			// 登录相关

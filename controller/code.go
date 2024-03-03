@@ -15,6 +15,8 @@ const (
 	CodeNeedLogin
 	CodePhoneCodeSendError
 	CodeEmailCodeSendError
+	CodePhoneExist
+	CodeEmailExist
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -29,6 +31,8 @@ var codeMsgMap = map[ResCode]string{
 	CodeNeedLogin:          "当前未登录",
 	CodePhoneCodeSendError: "短信发送失败",
 	CodeEmailCodeSendError: "邮件发送失败",
+	CodePhoneExist:         "该手机号码已经注册",
+	CodeEmailExist:         "该邮箱已经注册",
 }
 
 func (c ResCode) Msg() string {

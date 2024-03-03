@@ -115,3 +115,31 @@ func SendEmailCode(email string) error {
 	}
 	return nil
 }
+
+// SignupUsingPhone：处理手机注册登陆逻辑
+func SignupUsingPhone(p *models.ParamSignupUsingPhone) (err error) {
+	// 1. 判断用户是否存在
+	if err = mysql.CheckUserExist(p.Name); err != nil {
+		return err
+	}
+
+	// 判断手机号码是否存在
+	if _, err = mysql.IsPhoneExist(p.Phone); err != nil {
+		return err
+	}
+	// 2. 生成uid
+	userID := snowflake.GenID()
+
+	// 3. 构造用户实例
+	user := &models.User{
+		UserID:   userID,
+		Username: p.Name,
+		Password: p.Password,
+		Phone:    p.Phone,
+	}
+
+	// 4. 保存到数据库
+	err = mysql.InsertUser(user)
+
+	return
+}

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"github.com/xiaorui/web_app/dao/redis"
 	"github.com/xiaorui/web_app/models"
 	"github.com/xiaorui/web_app/pkg/captcha"
 	"reflect"
@@ -247,6 +248,47 @@ func ValidateEmailCodeRequest(data interface{}, ctx *gin.Context) map[string][]s
 	return errs
 }
 
+// ValidateSignupUsingPhone: 验证使用手机号码进行注册的参数是否正确
+func ValidateSignupUsingPhone(data interface{}, ctx *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"phone":            []string{"required", "digits:11"},
+		"name":             []string{"required", "alpha_num", "between:3,20"},
+		"password":         []string{"required", "min:6"},
+		"password_confirm": []string{"required"},
+		"verify_code":      []string{"required", "digits:6"},
+	}
+
+	messages := govalidator.MapData{
+		"phone": []string{
+			"required:手机号为必填项，参数名称 phone",
+			"digits:手机号长度必须为 11 位的数字",
+		},
+		"name": []string{
+			"required:用户名为必填项",
+			"alpha_num:用户名格式错误，只允许数字和英文",
+			"between:用户名长度需在 3~20 之间",
+		},
+		"password": []string{
+			"required:密码为必填项",
+			"min:密码长度需大于 6",
+		},
+		"password_confirm": []string{
+			"required:确认密码框为必填项",
+		},
+		"verify_code": []string{
+			"required:验证码答案必填",
+			"digits:验证码长度必须为 6 位的数字",
+		},
+	}
+
+	errs := validate(data, rules, messages)
+	_data := data.(*models.ParamSignupUsingPhone)
+	errs = ValidatePasswordConfirm(_data.Password, _data.PasswordConfirm, errs)
+	errs = ValidatePhoneCode(_data.Phone, _data.Code, errs)
+
+	return errs
+}
+
 func ValidateCaptcha(captchaID, captchaAnswer string, errs map[string][]string) map[string][]string {
 	if ok := captcha.NewCaptcha().VerifyCaptcha(captchaID, captchaAnswer); !ok {
 		errs["captcha_answer"] = append(errs["captcha_answer"], "图片验证码错误")
@@ -263,4 +305,20 @@ func validate(data interface{}, rules, messages govalidator.MapData) map[string]
 		TagIdentifier: "valid",  // 在结构体中的tag是什么
 	}
 	return govalidator.New(opts).ValidateStruct()
+}
+
+// ValidatePasswordConfirm: 验证两次输入的手机号码是否相等
+func ValidatePasswordConfirm(password, passwordConfirm string, errs map[string][]string) map[string][]string {
+	if password != passwordConfirm {
+		errs["password_confirm"] = append(errs["password_confirm"], "两次输入的密码不一致")
+	}
+	return errs
+}
+
+// ValidatePhoneCode: 验证手机验证码是否正确
+func ValidatePhoneCode(phone, code string, errs map[string][]string) map[string][]string {
+	if ok := redis.CheckVerifyCode(phone, code); !ok {
+		errs["verify_code"] = append(errs["verify_code"], "验证码错误")
+	}
+	return errs
 }

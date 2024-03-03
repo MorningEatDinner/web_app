@@ -77,12 +77,24 @@ func IsPhoneExist(phone string) (bool, error) {
 	// db.Model(&models.User{}).Where("")
 	var count int64
 	err := DB.Model(&models.User{}).Where("phone = ?", phone).Count(&count).Error
-	return count > 0, err
+	if err != nil {
+		return false, err
+	}
+	if count > 0 {
+		return false, ErrorPhoneExist
+	}
+	return true, err
 }
 
 // IsEmailExist: 验证邮箱是否注册了
 func IsEmailExist(email string) (bool, error) {
 	var count int64
 	err := DB.Model(&models.User{}).Where("email = ?", email).Count(&count).Error
-	return count > 0, err
+	if err != nil {
+		return false, err
+	}
+	if count > 0 {
+		return false, ErrorEmailExist
+	}
+	return true, err
 }

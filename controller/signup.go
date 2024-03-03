@@ -159,3 +159,30 @@ func SendEmailCode(ctx *gin.Context) {
 	//3. 返回响应
 	ResponseSuccess(ctx, nil)
 }
+
+// SignupUsingPhone: 使用手机号码进行注册
+func SignupUsingPhone(ctx *gin.Context) {
+	// 1. 进行参数的验证
+	p := new(models.ParamSignupUsingPhone)
+	if ok := Validate(ctx, p, ValidateSignupUsingPhone); !ok {
+		return
+	}
+	// 2. 处理业务逻辑 ， 进行注册
+	if err := logic.SignupUsingPhone(p); err != nil {
+		zap.L().Error("logic.SignupUsingPhone failed..", zap.Error(err))
+		if err == mysql.ErrorUserExist {
+			ResponseError(ctx, CodeUserExist)
+			return
+		} else if err == mysql.ErrorPhoneExist {
+			ResponseError(ctx, CodePhoneExist)
+			return
+		} else if err == mysql.ErrorEmailExist {
+			ResponseError(ctx, CodeEmailExist)
+			return
+		}
+		ResponseError(ctx, CodeServerBusy)
+		return
+	}
+	// 3. 返回响应
+	ResponseSuccess(ctx, nil)
+}
