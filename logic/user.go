@@ -61,6 +61,24 @@ func Login(p *models.ParamLogin) (user *models.User, err error) {
 	return
 }
 
+// LoginUsingPhoneWithCode: 使用手机+验证码的形式进行登陆
+func LoginUsingPhoneWithCode(p *models.ParamLoginUsingPhoneWithCode) (*models.User, string, error) {
+	user := &models.User{
+		Phone: p.Phone,
+	}
+	// 进行登陆操作
+	if err := mysql.LoginUsingPhoneWithCode(user); err != nil {
+		return nil, "", err
+	}
+
+	// 如果登录成功：即确实有这个用户存在
+	token, err := jwt.GenToken(user.UserID, user.Username)
+	if err != nil {
+		return nil, "", err
+	}
+	return user, token, nil
+}
+
 // IsPhoneExist：返回输入手机号码是否存在数据表中
 func IsPhoneExist(phone string) (bool, error) {
 	return mysql.IsPhoneExist(phone)
@@ -142,4 +160,30 @@ func SignupUsingPhone(p *models.ParamSignupUsingPhone) (err error) {
 	err = mysql.InsertUser(user)
 
 	return
+}
+
+// SignUpUsingEmail: 进行使用邮箱进行注册的业务
+func SignUpUsingEmail(p *models.ParamSignUpUsingEmail) (err error) {
+	// 1. 验证用户名是否存在
+	if err = mysql.CheckUserExist(p.Name); err != nil {
+		return
+	}
+	// 2. 验证邮箱是否已经注册
+	if _, err = mysql.IsEmailExist(p.Email); err != nil {
+		return
+	}
+	// 3. 生成uid
+	userID := snowflake.GenID()
+
+	// 4. 构造用户实例
+	_user := models.User{
+		UserID:   userID,
+		Username: p.Name,
+		Email:    p.Email,
+		Password: p.Password,
+	}
+
+	// 5. 保存到数据库中
+	return mysql.InsertUser(&_user)
+
 }

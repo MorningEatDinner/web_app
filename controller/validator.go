@@ -284,7 +284,78 @@ func ValidateSignupUsingPhone(data interface{}, ctx *gin.Context) map[string][]s
 	errs := validate(data, rules, messages)
 	_data := data.(*models.ParamSignupUsingPhone)
 	errs = ValidatePasswordConfirm(_data.Password, _data.PasswordConfirm, errs)
-	errs = ValidatePhoneCode(_data.Phone, _data.Code, errs)
+	errs = ValidateKeyCode(_data.Phone, _data.Code, errs)
+
+	return errs
+}
+
+// ValidateSignupUsingEmail：进行使用邮箱进行注册的参数验证功能
+func ValidateSignupUsingEmail(data interface{}, ctx *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"email":            []string{"required", "min:4", "max:30", "email"},
+		"name":             []string{"required", "alpha_num", "between:3,20"},
+		"password":         []string{"required", "min:6"},
+		"password_confirm": []string{"required"},
+		"verify_code":      []string{"required", "digits:6"},
+	}
+
+	messages := govalidator.MapData{
+		"email": []string{
+			"required:Email 为必填项",
+			"min:Email 长度需大于 4",
+			"max:Email 长度需小于 30",
+			"email:Email 格式不正确，请提供有效的邮箱地址",
+		},
+		"name": []string{
+			"required:用户名为必填项",
+			"alpha_num:用户名格式错误，只允许数字和英文",
+			"between:用户名长度需在 3~20 之间",
+		},
+		"password": []string{
+			"required:密码为必填项",
+			"min:密码长度需大于 6",
+		},
+		"password_confirm": []string{
+			"required:确认密码框为必填项",
+		},
+		"verify_code": []string{
+			"required:验证码答案必填",
+			"digits:验证码长度必须为 6 位的数字",
+		},
+	}
+
+	errs := validate(data, rules, messages) // 根据规则来验证参数
+
+	_data := data.(*models.ParamSignUpUsingEmail)
+	// 验证验证码是否正确
+	errs = ValidateKeyCode(_data.Email, _data.Code, errs)
+	// 验证密码是否相同
+	errs = ValidatePasswordConfirm(_data.Password, _data.PasswordConfirm, errs)
+
+	return errs
+}
+
+// ValidateLoginUsingPhone: 使用手机号码+验证码进行登陆
+func ValidateLoginUsingPhoneWithCode(data interface{}, ctx *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"phone":       []string{"required", "digits:11"},
+		"verify_code": []string{"required", "digits:6"},
+	}
+	messages := govalidator.MapData{
+		"phone": []string{
+			"required:手机号为必填项，参数名称 phone",
+			"digits:手机号长度必须为 11 位的数字",
+		},
+		"verify_code": []string{
+			"required:验证码答案必填",
+			"digits:验证码长度必须为 6 位的数字",
+		},
+	}
+
+	errs := validate(data, rules, messages)
+	// 进行强制转换之后验证验证码是否正确
+	_data := data.(*models.ParamLoginUsingPhoneWithCode)
+	errs = ValidateKeyCode(_data.Phone, _data.Code, errs)
 
 	return errs
 }
@@ -315,9 +386,9 @@ func ValidatePasswordConfirm(password, passwordConfirm string, errs map[string][
 	return errs
 }
 
-// ValidatePhoneCode: 验证手机验证码是否正确
-func ValidatePhoneCode(phone, code string, errs map[string][]string) map[string][]string {
-	if ok := redis.CheckVerifyCode(phone, code); !ok {
+// ValidateKeyCode: 验证手机或者邮箱验证码是否正确
+func ValidateKeyCode(key, code string, errs map[string][]string) map[string][]string {
+	if ok := redis.CheckVerifyCode(key, code); !ok {
 		errs["verify_code"] = append(errs["verify_code"], "验证码错误")
 	}
 	return errs

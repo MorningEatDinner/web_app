@@ -142,6 +142,7 @@ func SendPhoneCode(ctx *gin.Context) {
 	ResponseSuccess(ctx, nil)
 }
 
+// 使用:: MailHog -smtp-bind-addr 0.0.0.0:1028 -api-bind-addr 127.0.0.1:8026 -ui-bind-addr 127.0.0.1:8026 我这样就行了
 // SendEmailCode: 给指定邮箱发送验证码
 func SendEmailCode(ctx *gin.Context) {
 	// 1. 验证参数
@@ -176,7 +177,29 @@ func SignupUsingPhone(ctx *gin.Context) {
 		} else if err == mysql.ErrorPhoneExist {
 			ResponseError(ctx, CodePhoneExist)
 			return
-		} else if err == mysql.ErrorEmailExist {
+		}
+		ResponseError(ctx, CodeServerBusy)
+		return
+	}
+	// 3. 返回响应
+	ResponseSuccess(ctx, nil)
+}
+
+// SignupUsingEmail： 使用邮箱进行注册
+func SignupUsingEmail(ctx *gin.Context) {
+	//  1. 进行参数验证
+	p := new(models.ParamSignUpUsingEmail)
+	if ok := Validate(ctx, p, ValidateSignupUsingEmail); !ok {
+		return
+	}
+	// 2. 进行业务处理, 创建新的用户
+	if err := logic.SignUpUsingEmail(p); err != nil {
+		zap.L().Error("logic.SignUpUsingEmail", zap.Error(err))
+		if err == mysql.ErrorUserExist {
+			ResponseError(ctx, CodeUserExist)
+			return
+		}
+		if err == mysql.ErrorEmailExist {
 			ResponseError(ctx, CodeEmailExist)
 			return
 		}

@@ -7,16 +7,18 @@ const (
 	CodeInvalidParam
 	CodeUserExist
 	CodeUserNotExist
+	CodePhoneCodeSendError
+	CodeEmailCodeSendError
+	CodePhoneExist
+	CodeEmailExist
+	CodePhoneNotExist
+	CodeEmailNotExist
 	CodeInvalidPassword
 	CodeServerBusy
 
 	CodeNeedAuth
 	CodeInvalidToken
 	CodeNeedLogin
-	CodePhoneCodeSendError
-	CodeEmailCodeSendError
-	CodePhoneExist
-	CodeEmailExist
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -33,6 +35,8 @@ var codeMsgMap = map[ResCode]string{
 	CodeEmailCodeSendError: "邮件发送失败",
 	CodePhoneExist:         "该手机号码已经注册",
 	CodeEmailExist:         "该邮箱已经注册",
+	CodePhoneNotExist:      "该手机号码未注册",
+	CodeEmailNotExist:      "该邮箱未注册",
 }
 
 func (c ResCode) Msg() string {

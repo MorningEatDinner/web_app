@@ -4,7 +4,6 @@ import (
 	"crypto/md5"
 	"database/sql"
 	"encoding/hex"
-
 	"github.com/xiaorui/web_app/models"
 )
 
@@ -62,6 +61,18 @@ func Login(user *models.User) (err error) {
 	return
 }
 
+// LoginUsingPhoneWithCode： 使用手机+验证码登陆
+func LoginUsingPhoneWithCode(user *models.User) error {
+	// 这里因为已经验证过验证码了， 所以只需要知道用户是否存在, 即该手机号码是否注册
+	// 得拿到整个user，并且写回
+	err := DB.Model(&models.User{}).Where("phone = ?", user.Phone).First(user).Error
+	if err != nil {
+		// 如果手机号码不存在
+		return ErrorPhoneNotExist
+	}
+	return err
+}
+
 func GetUserByID(id int64) (user *models.User, err error) {
 	user = new(models.User)
 	// sqlStr := `select user_id, username from user where user_id=?`
@@ -80,7 +91,7 @@ func IsPhoneExist(phone string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if count > 0 {
+	if count == 0 {
 		return false, ErrorPhoneExist
 	}
 	return true, err

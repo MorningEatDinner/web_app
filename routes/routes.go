@@ -37,11 +37,10 @@ func Setup(mode string) *gin.Engine {
 
 			// 使用手机或者邮箱进行注册
 			authGroup.POST("/signup/phone", controller.SignupUsingPhone)
-			authGroup.POST("/signup/email", nil)
+			authGroup.POST("/signup/email", controller.SignupUsingEmail)
 
 			// 登录相关
-			authGroup.POST("/login/phone", nil)
-			authGroup.POST("/login/email", nil)
+			authGroup.POST("/login/phone", controller.LoginUsingPhone)
 			authGroup.POST("/login/referesh-token", nil)
 
 			// 重置密码
