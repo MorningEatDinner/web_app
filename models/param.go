@@ -79,3 +79,8 @@ type ParamLoginUsingPhoneWithCode struct {
 	Phone string `json:"phone,omitempty" valid:"phone"`
 	Code  string `json:"code,omitempty" valid:"verify_code"`
 }
+
+type ParamLoginUsingEmail struct {
+	Email    string `json:"email,omitempty" valid:"email"`
+	Password string `json:"password" valid:"password"`
+}

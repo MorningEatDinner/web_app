@@ -53,30 +53,39 @@ func Login(p *models.ParamLogin) (user *models.User, err error) {
 	//如果登录成功
 	//生成JWT
 	//return jwt.GenToken(user.UserID, user.Username)
-	token, err := jwt.GenToken(user.UserID, user.Username)
+	accessToken, _, err := jwt.GenToken(user.UserID, user.Username)
 	if err != nil {
 		return nil, err
 	}
-	user.Token = token
+	user.Token = accessToken
 	return
 }
 
 // LoginUsingPhoneWithCode: 使用手机+验证码的形式进行登陆
-func LoginUsingPhoneWithCode(p *models.ParamLoginUsingPhoneWithCode) (*models.User, string, error) {
+func LoginUsingPhoneWithCode(p *models.ParamLoginUsingPhoneWithCode) (*models.User, error) {
 	user := &models.User{
 		Phone: p.Phone,
 	}
 	// 进行登陆操作
 	if err := mysql.LoginUsingPhoneWithCode(user); err != nil {
-		return nil, "", err
+		return nil, err
 	}
 
 	// 如果登录成功：即确实有这个用户存在
-	token, err := jwt.GenToken(user.UserID, user.Username)
-	if err != nil {
-		return nil, "", err
+	return user, nil
+}
+
+// LoginUsingEmail: 使用邮箱+密码的方式进行登陆
+func LoginUsingEmail(p *models.ParamLoginUsingEmail) (*models.User, error) {
+	user := &models.User{
+		Email:    p.Email,
+		Password: p.Password,
 	}
-	return user, token, nil
+	if err := mysql.LoginUsingEmail(user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 // IsPhoneExist：返回输入手机号码是否存在数据表中

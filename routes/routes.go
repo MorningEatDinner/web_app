@@ -41,24 +41,21 @@ func Setup(mode string) *gin.Engine {
 
 			// 登录相关
 			authGroup.POST("/login/phone", controller.LoginUsingPhone)
-			authGroup.POST("/login/referesh-token", nil)
+			authGroup.POST("/login/email", controller.LoginUsingEmail)
+			//authGroup.POST("/login/username", controller.LoginUsingUsername)
+			authGroup.GET("/login/refresh-token", controller.RefreshToken)
 
 			// 重置密码
-			authGroup.POST("/password/phone", nil)
-			authGroup.POST("/password/email", nil)
+			//authGroup.POST("/password/phone", nil)
+			//authGroup.POST("/password/email", nil)
 		}
 
 		// 后面的所有请求都需要使用这个中间件，即需要验证是否进行了登陆
 		v1.Use(middlewares.JWTAuthMiddleware())
-
 		// 创建用户相关的路由组
 		usersGroup := v1.Group("/user")
 		{
-			usersGroup.GET("", func(ctx *gin.Context) {
-				ctx.JSON(http.StatusOK, gin.H{
-					"msg": "没问题",
-				})
-			})
+			usersGroup.GET("", controller.CurrentUser)
 			usersGroup.PUT("", nil) // 更新用户信息
 			usersGroup.PUT("/email", nil)
 			usersGroup.PUT("/phone", nil)

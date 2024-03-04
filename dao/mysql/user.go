@@ -66,9 +66,26 @@ func LoginUsingPhoneWithCode(user *models.User) error {
 	// 这里因为已经验证过验证码了， 所以只需要知道用户是否存在, 即该手机号码是否注册
 	// 得拿到整个user，并且写回
 	err := DB.Model(&models.User{}).Where("phone = ?", user.Phone).First(user).Error
-	if err != nil {
+	if err == sql.ErrNoRows {
 		// 如果手机号码不存在
 		return ErrorPhoneNotExist
+	}
+	return err
+}
+
+// LoginUsingEmail: 使用email来查询用户是否存在， 并且确认密码是否一致
+func LoginUsingEmail(user *models.User) error {
+	// 1. 查询用户
+	oPassword := user.Password
+	err := DB.Model(&models.User{}).Where("email = ?", user.Email).First(user).Error
+	if err == sql.ErrNoRows {
+		return ErrorEmailNotExist
+	}
+	if err != nil {
+		return err
+	}
+	if encryptPassword(oPassword) != user.Password {
+		return ErrorPasswordInvalid
 	}
 	return err
 }
