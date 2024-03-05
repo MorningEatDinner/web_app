@@ -2,10 +2,10 @@ package mysql
 
 import (
 	"crypto/md5"
-	"database/sql"
 	"encoding/hex"
 
 	"github.com/xiaorui/web_app/models"
+	"gorm.io/gorm"
 )
 
 const secret = "xiaorui.com"
@@ -48,7 +48,7 @@ func Login(user *models.User) (err error) {
 	oPassword := user.Password // 记录原始密码， 后面从数据库中返回的密码会叠加在这个数据上
 	// err = db.Get(user, sqlStr, user.Username)
 	err = DB.Model(&models.User{}).Where("username = ?", user.Username).First(user).Error
-	if err == sql.ErrNoRows {
+	if err == gorm.ErrRecordNotFound {
 		//var ErrNoRows = errors.New("sql: no rows in result set")
 		//想要特别写出来这个错误，否则则原始错误信息返回
 		return ErrorUserNotExist
@@ -67,7 +67,7 @@ func LoginUsingPhoneWithCode(user *models.User) error {
 	// 这里因为已经验证过验证码了， 所以只需要知道用户是否存在, 即该手机号码是否注册
 	// 得拿到整个user，并且写回
 	err := DB.Model(&models.User{}).Where("phone = ?", user.Phone).First(user).Error
-	if err == sql.ErrNoRows {
+	if err == gorm.ErrRecordNotFound {
 		// 如果手机号码不存在
 		return ErrorPhoneNotExist
 	}
@@ -79,7 +79,7 @@ func LoginUsingEmail(user *models.User) error {
 	// 1. 查询用户
 	oPassword := user.Password
 	err := DB.Model(&models.User{}).Where("email = ?", user.Email).First(user).Error
-	if err == sql.ErrNoRows {
+	if err == gorm.ErrRecordNotFound {
 		return ErrorEmailNotExist
 	}
 	if err != nil {
@@ -135,4 +135,20 @@ func SaveUser(user *models.User) (*models.User, error) {
 		return nil, ErrorSaveUser
 	}
 	return user, nil
+}
+
+// CheckPasswordValid：验证用户密码是否有效
+func UpdatePassword(password, NewPassword string, userID int64) error {
+	var user models.User
+	err := DB.Model(&models.User{}).Where("user_id = ?", userID).First(&user).Error
+	if err == gorm.ErrRecordNotFound {
+		return ErrorUserNotExist
+	}
+	if encryptPassword(password) != user.Password {
+		return ErrorPasswordInvalid
+	}
+	user.Password = encryptPassword(NewPassword)
+	_, err = SaveUser(&user)
+
+	return err
 }

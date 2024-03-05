@@ -1,5 +1,7 @@
 package models
 
+import "mime/multipart"
+
 const (
 	OrderTime  = "time"
 	OrderScore = "score"
@@ -94,4 +96,19 @@ type ParamUpdateProfile struct {
 type ParamUpdateEmail struct {
 	Email      string `json:"email,omitempty" valid:"email"`
 	VerifyCode string `json:"verify_code,omitempty" valid:"verify_code"`
+}
+
+type ParamUpdatePhone struct {
+	Phone string `json:"phone,omitempty" valid:"phone"`
+	Code  string `json:"code,omitempty" valid:"code"`
+}
+
+type ParamUpdatePassword struct {
+	Password           string `json:"password" valid:"password"`
+	NewPassword        string `json:"new_password" valid:"new_password"`
+	NewPasswordConfirm string `json:"new_password_confirm" valid:"new_password_confirm"`
+}
+
+type ParamUpdateAvatar struct {
+	Avatar *multipart.FileHeader `valid:"avatar" form:"avatar"`
 }

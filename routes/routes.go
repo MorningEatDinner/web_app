@@ -59,8 +59,8 @@ func Setup(mode string) *gin.Engine {
 			usersGroup.PUT("", controller.UpdateProfile) // 更新用户信息
 			usersGroup.PUT("/email", controller.UpdateEmail)
 			usersGroup.PUT("/phone", controller.UpdatePhone)
-			usersGroup.PUT("/password", controller.UpdatePassword)
-			usersGroup.PUT("/avatar", nil) // 更新头像
+			usersGroup.PUT("/password", controller.UpdatePassword) // 更改密码
+			usersGroup.PUT("/avatar", controller.UpdateAvatar)     // 更新头像
 		}
 
 		commGroup := v1.Group("/community")

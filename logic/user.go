@@ -83,6 +83,7 @@ func LoginUsingEmail(p *models.ParamLoginUsingEmail) (*models.User, error) {
 		Password: p.Password,
 	}
 	if err := mysql.LoginUsingEmail(user); err != nil {
+		zap.L().Error(" mysql.LoginUsingEmail failed", zap.Error(err))
 		return nil, err
 	}
 
@@ -236,4 +237,26 @@ func UpdateEmail(p *models.ParamUpdateEmail, userID int64) (user *models.User, e
 	user.Email = p.Email
 	// 4. 写回数据库
 	return mysql.SaveUser(user)
+}
+
+func UpdatePhone(p *models.ParamUpdatePhone, userID int64) (user *models.User, err error) {
+	// 1. 查询当前用户
+	if user, err = mysql.GetUserByID(userID); err != nil {
+		return nil, err
+	}
+	// 2. 查看当前号码是否存在
+	if _, err = mysql.IsPhoneExist(p.Phone); err != nil {
+		return nil, err
+	}
+
+	// 3. 设置新的号码
+	user.Phone = p.Phone
+
+	// 4. 进行写回
+	return mysql.SaveUser(user)
+}
+
+// UpdatePassword： 更改当前用户的密码
+func UpdatePassword(p *models.ParamUpdatePassword, userID int64) (err error) {
+	return mysql.UpdatePassword(p.Password, p.NewPassword, userID)
 }

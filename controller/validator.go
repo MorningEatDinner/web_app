@@ -470,3 +470,79 @@ func ValidateUpdateEmail(data interface{}, c *gin.Context) map[string][]string {
 	errs = ValidateKeyCode(_data.Email, _data.VerifyCode, errs)
 	return errs
 }
+
+func ValidateUpdatePhone(data interface{}, ctx *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"phone": []string{"required", "digits:11"}, // 定义每个字段需要满足的规则是什么
+		"code":  []string{"required", "digits:6"},
+	}
+	messages := govalidator.MapData{
+		"phone": []string{
+			"required:手机号为必填项，参数名称 phone", // 如果不满足这个字段的要求， 那么会返回这个信息
+			"digits:手机号长度必须为 11 位的数字",
+		},
+		"code": []string{
+			"required:验证码答案必填",
+			"digits:验证码长度必须为 6 位的数字",
+		},
+	}
+
+	errs := validate(data, rules, messages)
+	_data := data.(*models.ParamUpdatePhone)
+	// 验证手机号码验证码是否匹配
+	errs = ValidateKeyCode(_data.Phone, _data.Code, errs)
+	return errs
+}
+
+func ValidateUpdatePassword(data interface{}, c *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"password":             []string{"required", "min:6"},
+		"new_password":         []string{"required", "min:6"},
+		"new_password_confirm": []string{"required", "min:6"},
+	}
+	messages := govalidator.MapData{
+		"password": []string{
+			"required:密码为必填项",
+			"min:密码长度需大于 6",
+		},
+		"new_password": []string{
+			"required:密码为必填项",
+			"min:密码长度需大于 6",
+		},
+		"new_password_confirm": []string{
+			"required:确认密码框为必填项",
+			"min:确认密码长度需大于 6",
+		},
+	}
+
+	errs := validate(data, rules, messages)
+	_data := data.(*models.ParamUpdatePassword)
+	errs = ValidatePasswordConfirm(_data.NewPassword, _data.NewPasswordConfirm, errs)
+	return errs
+}
+
+func ValidateUpdateAvatar(data interface{}, ctx *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"file:avatar": []string{"ext:png,jpg,jpeg", "size:20971520", "required"},
+	}
+	message := govalidator.MapData{
+		"file:avatar": []string{
+			"ext:ext头像只能上传 png, jpg, jpeg 任意一种的图片",
+			"size:头像文件最大不能超过 20MB",
+			"required:必须上传图片",
+		},
+	}
+	return validateFile(ctx, data, rules, message)
+}
+
+// validateFile: 验证上传文件是否有效
+func validateFile(c *gin.Context, data interface{}, rules govalidator.MapData, messages govalidator.MapData) map[string][]string {
+	opts := govalidator.Options{
+		Request:       c.Request,
+		Rules:         rules,
+		Messages:      messages,
+		TagIdentifier: "valid",
+	}
+	// 调用 govalidator 的 Validate 方法来验证文件
+	return govalidator.New(opts).Validate()
+}

@@ -3,9 +3,10 @@ package controller
 import (
 	"errors"
 	"fmt"
-	"github.com/xiaorui/web_app/pkg/jwt"
 	"net/http"
 	"strings"
+
+	"github.com/xiaorui/web_app/pkg/jwt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
