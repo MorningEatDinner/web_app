@@ -2,11 +2,12 @@ package controller
 
 import (
 	"fmt"
+	"reflect"
+	"strings"
+
 	"github.com/xiaorui/web_app/dao/redis"
 	"github.com/xiaorui/web_app/models"
 	"github.com/xiaorui/web_app/pkg/captcha"
-	"reflect"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -414,5 +415,58 @@ func ValidateKeyCode(key, code string, errs map[string][]string) map[string][]st
 	if ok := redis.CheckVerifyCode(key, code); !ok {
 		errs["verify_code"] = append(errs["verify_code"], "验证码错误")
 	}
+	return errs
+}
+
+func ValidateUpdateProfile(data interface{}, ctx *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"name":         []string{"required", "alpha_num", "between:3,20"},
+		"introduction": []string{"min:4", "max:240"},
+		"city":         []string{"min:2", "max:20"},
+	}
+
+	messages := govalidator.MapData{
+		"name": []string{
+			"required:用户名为必填项",
+			"alpha_num:用户名格式错误，只允许数字和英文",
+			"between:用户名长度需在 3~20 之间",
+		},
+		"introduction": []string{
+			"min:描述长度需至少 4 个字",
+			"max:描述长度不能超过 240 个字",
+		},
+		"city": []string{
+			"min:城市需至少 2 个字",
+			"max:城市不能超过 20 个字",
+		},
+	}
+	return validate(data, rules, messages)
+}
+
+func ValidateUpdateEmail(data interface{}, c *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"email": []string{
+			"required", "min:4",
+			"max:30",
+			"email",
+		},
+		"verify_code": []string{"required", "digits:6"},
+	}
+	messages := govalidator.MapData{
+		"email": []string{
+			"required:Email 为必填项",
+			"min:Email 长度需大于 4",
+			"max:Email 长度需小于 30",
+			"email:Email 格式不正确，请提供有效的邮箱地址",
+		},
+		"verify_code": []string{
+			"required:验证码答案必填",
+			"digits:验证码长度必须为 6 位的数字",
+		},
+	}
+
+	errs := validate(data, rules, messages)
+	_data := data.(*models.ParamUpdateEmail) // 容易出现错误的地方
+	errs = ValidateKeyCode(_data.Email, _data.VerifyCode, errs)
 	return errs
 }

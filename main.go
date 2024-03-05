@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/spf13/cobra"
 	"github.com/xiaorui/web_app/cmd"
 	"github.com/xiaorui/web_app/controller"
 	"github.com/xiaorui/web_app/pkg/console"
 	"github.com/xiaorui/web_app/pkg/snowflake"
-	"os"
 
 	"github.com/xiaorui/web_app/dao/mysql"
 	"github.com/xiaorui/web_app/dao/redis"

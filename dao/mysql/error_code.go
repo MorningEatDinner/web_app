@@ -11,4 +11,5 @@ var (
 	ErrorUserNotExist    = errors.New("用户不存在")
 	ErrorPasswordInvalid = errors.New("密码错误！")
 	ErrorInvalidID       = errors.New("无效的ID")
+	ErrorSaveUser        = errors.New("保存用户信息失败")
 )

@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"database/sql"
 	"encoding/hex"
+
 	"github.com/xiaorui/web_app/models"
 )
 
@@ -108,10 +109,10 @@ func IsPhoneExist(phone string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if count == 0 {
-		return false, ErrorPhoneExist
+	if count > 0 {
+		return true, ErrorPhoneExist
 	}
-	return true, err
+	return false, nil
 }
 
 // IsEmailExist: 验证邮箱是否注册了
@@ -125,4 +126,13 @@ func IsEmailExist(email string) (bool, error) {
 		return false, ErrorEmailExist
 	}
 	return true, err
+}
+
+// SaveUser: 保存修改后的用户信息到数据库中
+func SaveUser(user *models.User) (*models.User, error) {
+	res := DB.Save(user)
+	if res.RowsAffected == 0 {
+		return nil, ErrorSaveUser
+	}
+	return user, nil
 }

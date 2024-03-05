@@ -56,10 +56,10 @@ func Setup(mode string) *gin.Engine {
 		usersGroup := v1.Group("/user")
 		{
 			usersGroup.GET("", controller.CurrentUser)
-			usersGroup.PUT("", nil) // 更新用户信息
-			usersGroup.PUT("/email", nil)
-			usersGroup.PUT("/phone", nil)
-			usersGroup.PUT("/password", nil)
+			usersGroup.PUT("", controller.UpdateProfile) // 更新用户信息
+			usersGroup.PUT("/email", controller.UpdateEmail)
+			usersGroup.PUT("/phone", controller.UpdatePhone)
+			usersGroup.PUT("/password", controller.UpdatePassword)
 			usersGroup.PUT("/avatar", nil) // 更新头像
 		}
 

@@ -3,7 +3,7 @@ package models
 import "time"
 
 type User struct {
-	UserID       int64     `json:"user_id,string" gorm:"column:user_id"`
+	UserID       int64     `json:"user_id,string" gorm:"primaryKey;column:user_id"`
 	Username     string    `json:"username" gorm:"column:username"`
 	Password     string    `json:"-" gorm:"column:password"` //  使用 “- ” 使得在序列化的结果中不会出现当前字段
 	Email        string    `json:"email" gorm:"column:email"`

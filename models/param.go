@@ -84,3 +84,14 @@ type ParamLoginUsingEmail struct {
 	Email    string `json:"email,omitempty" valid:"email"`
 	Password string `json:"password" valid:"password"`
 }
+
+type ParamUpdateProfile struct {
+	Name         string `json:"name" valid:"name"`
+	City         string `json:"city" valid:"city"`
+	Introduction string `json:"introduction" valid:"introduction"`
+}
+
+type ParamUpdateEmail struct {
+	Email      string `json:"email,omitempty" valid:"email"`
+	VerifyCode string `json:"verify_code,omitempty" valid:"verify_code"`
+}

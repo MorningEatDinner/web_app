@@ -3,6 +3,7 @@ package logic
 import (
 	"errors"
 	"fmt"
+
 	"github.com/xiaorui/web_app/dao/mysql"
 	"github.com/xiaorui/web_app/dao/redis"
 	"github.com/xiaorui/web_app/models"
@@ -195,4 +196,44 @@ func SignUpUsingEmail(p *models.ParamSignUpUsingEmail) (err error) {
 	// 5. 保存到数据库中
 	return mysql.InsertUser(&_user)
 
+}
+
+// UpdateProfile: 修改用户名+简介+城市
+func UpdateProfile(p *models.ParamUpdateProfile, userID int64) (user *models.User, err error) {
+	// 1. 查询当前用户
+	if user, err = mysql.GetUserByID(userID); err != nil {
+		return nil, err
+	}
+
+	// 2. 如果要更改的用户名不是是当前用户名， 则查看用户名是否存在
+	if user.Username != p.Name {
+		if err = mysql.CheckUserExist(p.Name); err != nil {
+			return nil, err
+		}
+	}
+
+	// 3. 设置用户信
+	user.Username = p.Name
+	user.City = p.City
+	user.Introduction = p.Introduction
+	// 4. 写回数据库
+	return mysql.SaveUser(user)
+}
+
+// UpdateEmail: 修改用户邮箱
+func UpdateEmail(p *models.ParamUpdateEmail, userID int64) (user *models.User, err error) {
+	// 1. 查询当前用户
+	if user, err = mysql.GetUserByID(userID); err != nil {
+		return nil, err
+	}
+
+	// 2. 查看当下邮箱是否存在
+	if _, err = mysql.IsEmailExist(p.Email); err != nil {
+		return nil, err
+	}
+
+	// 3. 设置用户信
+	user.Email = p.Email
+	// 4. 写回数据库
+	return mysql.SaveUser(user)
 }
