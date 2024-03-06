@@ -112,3 +112,8 @@ type ParamUpdatePassword struct {
 type ParamUpdateAvatar struct {
 	Avatar *multipart.FileHeader `valid:"avatar" form:"avatar"`
 }
+
+type ParamCreateNewCommunity struct {
+	Name         string `json:"name" valid:"name"`
+	Introduction string `json:"introduction,omitempty" valid:"introduction"`
+}

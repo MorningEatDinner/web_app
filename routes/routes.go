@@ -65,11 +65,11 @@ func Setup(mode string) *gin.Engine {
 
 		commGroup := v1.Group("/community")
 		{
-			commGroup.POST("", nil)
-			commGroup.GET("", controller.CommunityHandler)
-			commGroup.GET("/:id", controller.CommunityDetailHandler)
-			commGroup.PUT("/:id", nil)
-			commGroup.DELETE("/:id", nil)
+			commGroup.POST("", controller.CreateNewCommunity)        // 新建社区
+			commGroup.GET("", controller.CommunityHandler)           //  获取所有社区信息
+			commGroup.GET("/:id", controller.CommunityDetailHandler) // 获取当个社区的详细信息
+			commGroup.PUT("/:id", nil)                               // 更新单个社区的信息
+			commGroup.DELETE("/:id", nil)                            // 删除某个社区
 		}
 
 		postGroup := v1.Group("/post")

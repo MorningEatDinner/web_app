@@ -546,3 +546,22 @@ func validateFile(c *gin.Context, data interface{}, rules govalidator.MapData, m
 	// 调用 govalidator 的 Validate 方法来验证文件
 	return govalidator.New(opts).Validate()
 }
+
+func ValidateNewCommunity(data interface{}, c *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"name":         []string{"required", "min:2", "max:8"},
+		"introduction": []string{"min:3", "max:255"},
+	}
+	messages := govalidator.MapData{
+		"name": []string{
+			"required:分类名称为必填项",
+			"min:分类名称长度需至少 2 个字",
+			"max:分类名称长度不能超过 8 个字",
+		},
+		"introduction": []string{
+			"min:分类描述长度需至少 3 个字",
+			"max:分类描述长度不能超过 255 个字",
+		},
+	}
+	return validate(data, rules, messages)
+}

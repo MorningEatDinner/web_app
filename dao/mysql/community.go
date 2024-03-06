@@ -29,3 +29,18 @@ func GetCommunityDetailByID(communityID int64) (community *models.Community, err
 	}
 	return
 }
+
+// CheckCommunityExist: 确认社区名是否存在
+func CheckCommunityExist(name string) error {
+	var count int64
+	err := DB.Model(&models.Community{}).Where("community_name = ?", name).Count(&count).Error
+	if count > 0 {
+		return ErrorCommunityExist
+	}
+	return err
+}
+
+// InsertCommunity: 插入新的社区
+func InsertCommunity(comm *models.Community) error {
+	return DB.Create(comm).Error
+}

@@ -4,7 +4,9 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/xiaorui/web_app/dao/mysql"
 	"github.com/xiaorui/web_app/logic"
+	"github.com/xiaorui/web_app/models"
 	"go.uber.org/zap"
 )
 
@@ -33,4 +35,24 @@ func CommunityDetailHandler(ctx *gin.Context) {
 		return
 	}
 	ResponseSuccess(ctx, data)
+}
+
+// CreateNewCommunity: 创建新的社区
+func CreateNewCommunity(ctx *gin.Context) {
+	p := new(models.ParamCreateNewCommunity)
+	if ok := Validate(ctx, p, ValidateNewCommunity); !ok {
+		return
+	}
+
+	// 处理业务： 创建新的社区
+	if err := logic.CreateNewCommunity(p); err != nil {
+		if err == mysql.ErrorCommunityExist {
+			ResponseError(ctx, CodeCommunityExist)
+			return
+		}
+		ResponseError(ctx, CodeServerBusy)
+		return
+	}
+
+	ResponseSuccess(ctx, nil)
 }
