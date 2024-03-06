@@ -5,6 +5,7 @@ import (
 
 	"github.com/xiaorui/web_app/models"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 func GetCommunityList() (communities []*models.Community, err error) {
@@ -43,4 +44,27 @@ func CheckCommunityExist(name string) error {
 // InsertCommunity: 插入新的社区
 func InsertCommunity(comm *models.Community) error {
 	return DB.Create(comm).Error
+}
+
+// GetCommunityByID: 获取社区信息
+func GetCommunityByID(cid string) (*models.Community, error) {
+	var com models.Community
+	err := DB.Model(&models.Community{}).Where("community_id = ?", cid).First(&com).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, ErrorCommunityNotExist
+	}
+	return &com, err
+}
+
+// SaveCommunity： 将更新后的数据保存到数据表中
+func SaveCommunity(comm *models.Community) (*models.Community, error) {
+	res := DB.Save(comm)
+	if res.RowsAffected == 0 {
+		return nil, ErrorSaveCommunity
+	}
+	return comm, nil
+}
+
+func DeleteCommunity(cid string) error {
+	return DB.Where("community_id = ?", cid).Delete(&models.Community{}).Error
 }

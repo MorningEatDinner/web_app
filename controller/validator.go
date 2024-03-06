@@ -547,7 +547,7 @@ func validateFile(c *gin.Context, data interface{}, rules govalidator.MapData, m
 	return govalidator.New(opts).Validate()
 }
 
-func ValidateNewCommunity(data interface{}, c *gin.Context) map[string][]string {
+func ValidateCommunity(data interface{}, c *gin.Context) map[string][]string {
 	rules := govalidator.MapData{
 		"name":         []string{"required", "min:2", "max:8"},
 		"introduction": []string{"min:3", "max:255"},

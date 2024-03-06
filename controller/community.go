@@ -39,8 +39,8 @@ func CommunityDetailHandler(ctx *gin.Context) {
 
 // CreateNewCommunity: 创建新的社区
 func CreateNewCommunity(ctx *gin.Context) {
-	p := new(models.ParamCreateNewCommunity)
-	if ok := Validate(ctx, p, ValidateNewCommunity); !ok {
+	p := new(models.ParamCommunity)
+	if ok := Validate(ctx, p, ValidateCommunity); !ok {
 		return
 	}
 
@@ -50,6 +50,52 @@ func CreateNewCommunity(ctx *gin.Context) {
 			ResponseError(ctx, CodeCommunityExist)
 			return
 		}
+		ResponseError(ctx, CodeServerBusy)
+		return
+	}
+
+	ResponseSuccess(ctx, nil)
+}
+
+// UpdateCommunity: 更新某个社区的信息
+func UpdateCommunity(ctx *gin.Context) {
+	// 1. 获取id
+	communityID := ctx.Param("id")
+	if communityID == "" {
+		ResponseError(ctx, CodeInvalidParam)
+		return
+	}
+
+	// 2. 验证参数
+	p := new(models.ParamCommunity)
+	if ok := Validate(ctx, p, ValidateCommunity); !ok {
+		return
+	}
+
+	// 3. 处理逻辑；更新社区信息
+	if community, err := logic.UpdateCommunity(communityID, p); err != nil {
+		if err == mysql.ErrorCommunityNotExist {
+			ResponseError(ctx, CodeCommunityNotEXist)
+			return
+		}
+		ResponseError(ctx, CodeServerBusy)
+		return
+	} else {
+		ResponseSuccess(ctx, community)
+	}
+}
+
+// DeleteCommunity： 删除某个社区的信息
+func DeleteCommunity(ctx *gin.Context) {
+	// 1. 获取id
+	communityID := ctx.Param("id")
+	if communityID == "" {
+		ResponseError(ctx, CodeInvalidParam)
+		return
+	}
+
+	// 2. 进行删除业务
+	if err := logic.DeleteCommunity(communityID); err != nil {
 		ResponseError(ctx, CodeServerBusy)
 		return
 	}

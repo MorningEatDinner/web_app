@@ -68,8 +68,8 @@ func Setup(mode string) *gin.Engine {
 			commGroup.POST("", controller.CreateNewCommunity)        // 新建社区
 			commGroup.GET("", controller.CommunityHandler)           //  获取所有社区信息
 			commGroup.GET("/:id", controller.CommunityDetailHandler) // 获取当个社区的详细信息
-			commGroup.PUT("/:id", nil)                               // 更新单个社区的信息
-			commGroup.DELETE("/:id", nil)                            // 删除某个社区
+			commGroup.PUT("/:id", controller.UpdateCommunity)        // 更新单个社区的信息
+			commGroup.DELETE("/:id", controller.DeleteCommunity)     // 删除某个社区
 		}
 
 		postGroup := v1.Group("/post")

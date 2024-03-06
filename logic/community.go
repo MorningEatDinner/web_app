@@ -17,7 +17,7 @@ func GetCommunityDetail(communityID int64) (*models.Community, error) {
 }
 
 // CreateNewCommunity: 创建新的社区
-func CreateNewCommunity(p *models.ParamCreateNewCommunity) error {
+func CreateNewCommunity(p *models.ParamCommunity) error {
 	// 1. 查询该社区是否存在
 	if err := mysql.CheckCommunityExist(p.Name); err != nil {
 		return err
@@ -34,4 +34,28 @@ func CreateNewCommunity(p *models.ParamCreateNewCommunity) error {
 	}
 
 	return mysql.InsertCommunity(comm)
+}
+
+// UpdateCommunity： 更新社区信息
+func UpdateCommunity(cid string, p *models.ParamCommunity) (com *models.Community, err error) {
+	// 1.  查询该community是否存在
+	if com, err = mysql.GetCommunityByID(cid); err != nil {
+		return nil, err
+	}
+
+	// 2. 查询更新的那个社区名是否已经存在
+	if err := mysql.CheckCommunityExist(p.Name); err != nil {
+		return nil, err
+	}
+
+	// 更改社区信息
+	com.Name = p.Name
+	com.Introduction = p.Introduction
+
+	// 写回数据库
+	return mysql.SaveCommunity(com)
+}
+
+func DeleteCommunity(cid string) error {
+	return mysql.DeleteCommunity(cid)
 }
