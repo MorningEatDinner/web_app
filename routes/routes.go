@@ -74,15 +74,14 @@ func Setup(mode string) *gin.Engine {
 
 		postGroup := v1.Group("/post")
 		{
-			postGroup.POST("", controller.CreatePostHandler)
-			postGroup.GET("/:id", controller.GetPostHandler)
+			postGroup.POST("", controller.CreatePostHandler) // 创建话题
+			postGroup.GET("/:id", controller.GetPostHandler) // 获取某个具体话题的信息
 			postGroup.GET("/posts", controller.GetPostListHandler)
 			postGroup.GET("/posts2", controller.GetPostListHandler0)
-			postGroup.POST("/vote", controller.PostVoteHandler)
+			postGroup.POST("/vote", controller.PostVoteHandler) // 对于某个话题进行投票
 			postGroup.GET("/posts3", controller.GetPostListHandler0)
 
-			postGroup.PUT("/:id", nil)
-			postGroup.DELETE("/:id", nil)
+			postGroup.DELETE("/:id", controller.DeletePost) // 删除话题
 		}
 	}
 

@@ -12,6 +12,6 @@ type User struct {
 	Introduction string    `json:"introduction" gorm:"column:introduction"`
 	Avatar       string    `json:"avatar" gorm:"column:avatar"`
 	Token        string    // 注意：此字段没有json或gorm标签
-	CreateTime   time.Time `json:"create_time" gorm:"column:create_time;autoCreateTime"`
-	UpdatedTime  time.Time `json:"updated_time" gorm:"column:updated_time;autoUpdateTime"`
+	CreateTime   time.Time `json:"-" gorm:"column:create_time;autoCreateTime"`
+	UpdatedTime  time.Time `json:"-" gorm:"column:updated_time;autoUpdateTime"`
 }

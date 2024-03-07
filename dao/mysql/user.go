@@ -152,3 +152,12 @@ func UpdatePassword(password, NewPassword string, userID int64) error {
 
 	return err
 }
+
+// DeletePost: 删除Post
+func DeletePost(post *models.Post, userID int64) error {
+	if post.AuthorID != userID {
+		return ErrorNotPermission
+	}
+
+	return DB.Delete(post).Error
+}

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/xiaorui/web_app/dao/mysql"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -153,4 +154,34 @@ func GetPostListHandler0(ctx *gin.Context) {
 	}
 	// 3. 返回响应
 	ResponseSuccess(ctx, data)
+}
+
+// DeletePost: 删除post
+func DeletePost(ctx *gin.Context) {
+	// 1. 获取postid
+	postIDStr := ctx.Param("id")
+	postID, _ := strconv.ParseInt(postIDStr, 10, 64)
+	if postID == 0 {
+		ResponseError(ctx, CodeInvalidParam)
+		return
+	}
+
+	// 2. 获取当前用户id
+	userID, err := getCurrentUser(ctx)
+	if err != nil {
+		ResponseError(ctx, CodeServerBusy)
+		return
+	}
+
+	// 3. 处理业务逻辑
+	if err := logic.DeletePost(postID, userID); err != nil {
+		if err == mysql.ErrorNotPermission {
+			ResponseError(ctx, CodeNotPerm)
+			return
+		}
+		ResponseError(ctx, CodeServerBusy)
+		return
+	}
+
+	ResponseSuccess(ctx, nil)
 }

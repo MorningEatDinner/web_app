@@ -9,8 +9,8 @@ type Post struct {
 	Status      int32     `json:"status" gorm:"column:status"`
 	Title       string    `json:"title" gorm:"column:title;not null"`
 	Content     string    `json:"content" gorm:"column:content;not null"`
-	CreateTime  time.Time `json:"create_time" gorm:"column:create_time;autoCreateTime"`
-	UpdatedTime time.Time `json:"updated_time" gorm:"column:updated_time;autoUpdateTime"`
+	CreateTime  time.Time `json:"-" gorm:"column:create_time;autoCreateTime"`
+	UpdatedTime time.Time `json:"-" gorm:"column:updated_time;autoUpdateTime"`
 }
 
 // 帖子详情结构的结构体 设置api接口专用的模型

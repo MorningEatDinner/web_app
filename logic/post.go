@@ -1,11 +1,16 @@
 package logic
 
 import (
+	"errors"
 	"github.com/xiaorui/web_app/dao/mysql"
 	"github.com/xiaorui/web_app/dao/redis"
 	"github.com/xiaorui/web_app/models"
 	"github.com/xiaorui/web_app/pkg/snowflake"
 	"go.uber.org/zap"
+)
+
+var (
+	ErrorNotPerm = errors.New("无权限操作")
 )
 
 func CreatePost(p *models.Post) (err error) {
@@ -210,4 +215,20 @@ func GetPostList0(p *models.ParamPostList) (data []*models.ApiPostDetail2, err e
 		return nil, err
 	}
 	return
+}
+
+// DeletePost: 删除post
+func DeletePost(postID, userID int64) error {
+	// 1. 查询post
+	post, err := mysql.GetPostByID(postID)
+	if err != nil {
+		return err
+	}
+
+	// 2. 执行删除操作
+	if err := mysql.DeletePost(post, userID); err != nil {
+		return err
+	}
+
+	return nil
 }

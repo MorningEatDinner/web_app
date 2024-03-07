@@ -22,6 +22,7 @@ const (
 
 	CodeCommunityExist
 	CodeCommunityNotEXist
+	CodeNotPerm
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -42,6 +43,7 @@ var codeMsgMap = map[ResCode]string{
 	CodeEmailNotExist:      "该邮箱未注册",
 	CodeCommunityExist:     "该社区已经存在",
 	CodeCommunityNotEXist:  "该社区不存在",
+	CodeNotPerm:            "没有操作权限",
 }
 
 func (c ResCode) Msg() string {

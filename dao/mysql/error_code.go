@@ -15,4 +15,5 @@ var (
 	ErrorSaveCommunity     = errors.New("保存社区信息失败")
 	ErrorCommunityExist    = errors.New("该社区已经存在")
 	ErrorCommunityNotExist = errors.New("该社区不存在")
+	ErrorNotPermission     = errors.New("无操作权限")
 )
