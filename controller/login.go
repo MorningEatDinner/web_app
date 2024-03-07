@@ -55,7 +55,7 @@ func LoginHandler(ctx *gin.Context) {
 
 	//3. 返回响应
 	ResponseSuccess(ctx, gin.H{
-		"user_id":   fmt.Sprintf("%d", user.UserID),
+		"user_id":   fmt.Sprintf("%d", user.ID),
 		"user_name": user.Username,
 		"token":     user.Token,
 	})
@@ -80,14 +80,14 @@ func LoginUsingPhone(ctx *gin.Context) {
 		return
 	}
 	// 生成token
-	accessToken, refreshToken, err := jwt.GenToken(user.UserID, user.Username)
+	accessToken, refreshToken, err := jwt.GenToken(user.ID, user.Username)
 	if err != nil {
 		ResponseError(ctx, CodeServerBusy)
 		return
 	}
 	// 3. 返回执行响应
 	ResponseSuccess(ctx, gin.H{
-		"user_id":       user.UserID,
+		"user_id":       user.ID,
 		"username":      user.Username,
 		"access_token":  accessToken,
 		"refresh_token": refreshToken,
@@ -115,14 +115,14 @@ func LoginUsingEmail(ctx *gin.Context) {
 		return
 	}
 	// 生成token
-	accessToken, refreshToken, err := jwt.GenToken(user.UserID, user.Username)
+	accessToken, refreshToken, err := jwt.GenToken(user.ID, user.Username)
 	if err != nil {
 		ResponseError(ctx, CodeServerBusy)
 		return
 	}
 	// 3. 返回执行响应
 	ResponseSuccess(ctx, gin.H{
-		"user_id":       user.UserID,
+		"user_id":       user.ID,
 		"username":      user.Username,
 		"access_token":  accessToken,
 		"refresh_token": refreshToken,

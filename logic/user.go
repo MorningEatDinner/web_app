@@ -29,7 +29,7 @@ func SignUp(p *models.ParamSignUp) (err error) {
 
 	//构造数据实例
 	user := &models.User{
-		UserID:   userID,
+		ID:       userID,
 		Username: p.Username,
 		Password: p.Password,
 	}
@@ -54,7 +54,7 @@ func Login(p *models.ParamLogin) (user *models.User, err error) {
 	//如果登录成功
 	//生成JWT
 	//return jwt.GenToken(user.UserID, user.Username)
-	accessToken, _, err := jwt.GenToken(user.UserID, user.Username)
+	accessToken, _, err := jwt.GenToken(user.ID, user.Username)
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +161,7 @@ func SignupUsingPhone(p *models.ParamSignupUsingPhone) (err error) {
 
 	// 3. 构造用户实例
 	user := &models.User{
-		UserID:   userID,
+		ID:       userID,
 		Username: p.Name,
 		Password: p.Password,
 		Phone:    p.Phone,
@@ -188,7 +188,7 @@ func SignUpUsingEmail(p *models.ParamSignUpUsingEmail) (err error) {
 
 	// 4. 构造用户实例
 	_user := models.User{
-		UserID:   userID,
+		ID:       userID,
 		Username: p.Name,
 		Email:    p.Email,
 		Password: p.Password,

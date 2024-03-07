@@ -11,6 +11,8 @@ type Post struct {
 	Content     string    `json:"content" gorm:"column:content;not null"`
 	CreateTime  time.Time `json:"-" gorm:"column:create_time;autoCreateTime"`
 	UpdatedTime time.Time `json:"-" gorm:"column:updated_time;autoUpdateTime"`
+	Community   Community `json:"-" gorm:"foreignKey:CommunityID"`
+	User        User      `json:"-" gorm:"foreignKey:AuthorID"`
 }
 
 // 帖子详情结构的结构体 设置api接口专用的模型

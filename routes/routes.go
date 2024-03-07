@@ -82,6 +82,13 @@ func Setup(mode string) *gin.Engine {
 			postGroup.GET("/posts3", controller.GetPostListHandler0)
 
 			postGroup.DELETE("/:id", controller.DeletePost) // 删除话题
+
+			commentGroup := postGroup.Group("/comment")
+			{
+				commentGroup.POST("/:post_id", controller.CreateComment)      // 给某个post发送一个comment
+				commentGroup.GET("/:post_id", controller.GetComment)          // 过去某个post的所有comment
+				commentGroup.DELETE("/:comment_id", controller.DeleteComment) // 删除某个comment
+			}
 		}
 	}
 

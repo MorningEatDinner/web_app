@@ -565,3 +565,17 @@ func ValidateCommunity(data interface{}, c *gin.Context) map[string][]string {
 	}
 	return validate(data, rules, messages)
 }
+
+func ValidateCreateComment(data interface{}, c *gin.Context) map[string][]string {
+	rules := govalidator.MapData{
+		"introduction": []string{"min:3", "max:255"},
+	}
+	messages := govalidator.MapData{
+		"introduction": []string{
+			"min:分类描述长度需至少 3 个字",
+			"max:分类描述长度不能超过 255 个字",
+		},
+	}
+
+	return validate(data, rules, messages)
+}

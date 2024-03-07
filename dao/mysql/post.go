@@ -29,6 +29,9 @@ func GetPostByID(pid int64) (post *models.Post, err error) {
 	// res := db.Where("post_id = ?", pid).First(post)
 	res := DB.Table("posts").Where("post_id = ?", pid).First(post)
 	err = res.Error
+	if post == nil {
+		return nil, ErrorPostNotExist
+	}
 
 	return
 }

@@ -40,7 +40,7 @@ func Init(cfg *settings.MySQLConfig) (err error) {
 	SQLDB.SetMaxIdleConns(cfg.MaxIdleConns)
 
 	// TODO:这里写数据库迁移的操作，后面进行更新
-	DB.AutoMigrate(&models.User{}, &models.Community{}, &models.Post{}) // 会默认使用复数形式
+	DB.AutoMigrate(&models.User{}, &models.Community{}, &models.Post{}, &models.Comment{}) // 会默认使用复数形式
 	return
 }
 

@@ -117,3 +117,7 @@ type ParamCommunity struct {
 	Name         string `json:"name" valid:"name"`
 	Introduction string `json:"introduction,omitempty" valid:"introduction"`
 }
+
+type ParamCreateNewComment struct {
+	Content string `json:"content" valid:"content"`
+}
