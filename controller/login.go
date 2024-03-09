@@ -62,6 +62,15 @@ func LoginHandler(ctx *gin.Context) {
 }
 
 // LoginUsingPhone: 实现使用手机号码进行登陆的功能
+// @Summary 实现使用手机号码进行登陆的功能
+// @Description 实现使用手机号码进行登陆的功能
+// @Tags Auth
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.ParamLoginUsingPhoneWithCode false "查询参数"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /auth/login/phone [post]
 func LoginUsingPhone(ctx *gin.Context) {
 	// 1. 进行参数的验证
 	p := new(models.ParamLoginUsingPhoneWithCode)
@@ -95,6 +104,15 @@ func LoginUsingPhone(ctx *gin.Context) {
 }
 
 // LoginUsingEmail: 使用邮箱+密码的方式进行登陆
+// @Summary 使用邮箱+密码的方式进行登陆
+// @Description 使用邮箱+密码的方式进行登陆
+// @Tags Auth
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.ParamLoginUsingEmail false "查询参数"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /auth/login/email [post]
 func LoginUsingEmail(ctx *gin.Context) {
 	p := new(models.ParamLoginUsingEmail)
 	if ok := Validate(ctx, p, ValidateLoginUsingEmail); !ok {
@@ -131,6 +149,15 @@ func LoginUsingEmail(ctx *gin.Context) {
 
 // RefreshToken: 刷新token
 // 如果访问令牌（Access Token）尚未过期，并且调用刷新令牌（Refresh Token）时，根据常规情况，不会生成新的令牌。
+// @Summary 使用邮箱+密码的方式进行登陆
+// @Description 使用邮箱+密码的方式进行登陆
+// @Tags Auth
+// @Accept application/json
+// @Produce application/json
+// @Param refresh_token query string false "刷新Token"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /auth//login/refresh-token [get]
 func RefreshToken(ctx *gin.Context) {
 	rt := ctx.Query("refresh_token")
 	authHeader := ctx.Request.Header.Get("Authorization")

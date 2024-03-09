@@ -10,6 +10,16 @@ import (
 	"go.uber.org/zap"
 )
 
+// CommunityHandler: 获取所有社区的信息
+// @Summary 创建新的社区
+// @Description 创建新的社区
+// @Tags Community
+// @Accept application/json
+// @Produce application/json
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /community [get]
 func CommunityHandler(ctx *gin.Context) {
 	// 查询到所有的数据(id, community_name)
 	data, err := logic.GetCommunityList() // 从表中获取数据
@@ -21,6 +31,17 @@ func CommunityHandler(ctx *gin.Context) {
 	ResponseSuccess(ctx, data)
 }
 
+// CommunityDetailHandler: 获取单个社区的详细信息
+// @Summary 创建新的社区
+// @Description 创建新的社区
+// @Tags Community
+// @Accept application/json
+// @Produce application/json
+// @Param id path int true "Community ID"
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /community/{id} [get]
 func CommunityDetailHandler(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	communityID, err := strconv.ParseInt(idStr, 10, 64) // 10进制， int64类型
@@ -38,6 +59,16 @@ func CommunityDetailHandler(ctx *gin.Context) {
 }
 
 // CreateNewCommunity: 创建新的社区
+// @Summary 创建新的社区
+// @Description 创建新的社区
+// @Tags Community
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.ParamCommunity true "参数"
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /community [post]
 func CreateNewCommunity(ctx *gin.Context) {
 	p := new(models.ParamCommunity)
 	if ok := Validate(ctx, p, ValidateCommunity); !ok {
@@ -58,6 +89,16 @@ func CreateNewCommunity(ctx *gin.Context) {
 }
 
 // UpdateCommunity: 更新某个社区的信息
+// @Summary 更新某个社区的信息
+// @Description 更新某个社区的信息
+// @Tags Community
+// @Accept application/json
+// @Produce application/json
+// @Param id path int true "Community ID"
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /community/{id} [put]
 func UpdateCommunity(ctx *gin.Context) {
 	// 1. 获取id
 	communityID := ctx.Param("id")
@@ -86,6 +127,16 @@ func UpdateCommunity(ctx *gin.Context) {
 }
 
 // DeleteCommunity： 删除某个社区的信息
+// @Summary 删除某个社区的信息
+// @Description 删除某个社区的信息
+// @Tags Community
+// @Accept application/json
+// @Produce application/json
+// @Param id path int true "Community ID"
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /community/{id} [delete]
 func DeleteCommunity(ctx *gin.Context) {
 	// 1. 获取id
 	communityID := ctx.Param("id")

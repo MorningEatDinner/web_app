@@ -5,8 +5,12 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/files" // swagger embed files
+	gs "github.com/swaggo/gin-swagger"
 	"github.com/xiaorui/web_app/controller"
+	_ "github.com/xiaorui/web_app/docs"
 	"github.com/xiaorui/web_app/logger"
+
 	"github.com/xiaorui/web_app/middlewares"
 )
 
@@ -16,6 +20,8 @@ func Setup(mode string) *gin.Engine {
 	}
 	r := gin.New()                                                                                          // 我尝试进行新的变化
 	r.Use(logger.GinLogger(), logger.GinRecovery(true), middlewares.RateLimitMiddleware(time.Second*2, 10)) // 2s新增1个令牌， 容量为10
+
+	r.GET("/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
 
 	v1 := r.Group("/api/v1")
 	{

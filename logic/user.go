@@ -92,7 +92,11 @@ func LoginUsingEmail(p *models.ParamLoginUsingEmail) (*models.User, error) {
 
 // IsPhoneExist：返回输入手机号码是否存在数据表中
 func IsPhoneExist(phone string) (bool, error) {
-	return mysql.IsPhoneExist(phone)
+	exist, err := mysql.IsPhoneExist(phone)
+	if err == mysql.ErrorPhoneExist {
+		return true, nil
+	}
+	return exist, err
 }
 
 // IsEmailExist：返回输入邮箱是否存在数据表中

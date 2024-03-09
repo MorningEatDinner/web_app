@@ -65,7 +65,16 @@ func SignUpHandler(ctx *gin.Context) {
 	ResponseSuccess(ctx, nil)
 }
 
-// IsPhoneExist: 判断手机号是否已经被注册
+// IsPhoneExist 判断手机号码是否存在接口
+// @Summary 判断手机号码是否存在
+// @Description 判断手机号码是否存在
+// @Tags Auth
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.ParamPhoneExist false "查询参数"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /auth/signup/phone/exist [post]
 func IsPhoneExist(ctx *gin.Context) {
 	//1. 验证参数， 验证手机号是否正确
 	p := new(models.ParamPhoneExist)
@@ -78,6 +87,7 @@ func IsPhoneExist(ctx *gin.Context) {
 	var err error
 	if exist, err = logic.IsPhoneExist(p.Phone); err != nil {
 		zap.L().Error("logic.IsPhoneExist failed.. ", zap.Error(err))
+		ResponseError(ctx, CodeServerBusy)
 		return
 	}
 
@@ -88,6 +98,15 @@ func IsPhoneExist(ctx *gin.Context) {
 }
 
 // IsEmailExist: 验证邮箱是否存在
+// @Summary 验证邮箱是否存在
+// @Description 验证邮箱是否存在
+// @Tags Auth
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.ParamEmailExist false "查询参数"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /auth/signup/email/exist [post]
 func IsEmailExist(ctx *gin.Context) {
 	//1. 验证参数， 验证手机号是否正确
 	p := new(models.ParamEmailExist)
@@ -100,6 +119,7 @@ func IsEmailExist(ctx *gin.Context) {
 	var err error
 	if exist, err = logic.IsEmailExist(p.Email); err != nil {
 		zap.L().Error("logic.IsEmailExist failed.. ", zap.Error(err))
+		ResponseError(ctx, CodeServerBusy)
 		return
 	}
 
@@ -110,6 +130,14 @@ func IsEmailExist(ctx *gin.Context) {
 }
 
 // GetCaptcha: 获取图形验证码
+// @Summary 获取图形验证码
+// @Description 获取图形验证码
+// @Tags Auth
+// @Accept application/json
+// @Produce application/json
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /auth/code/captcha [get]
 func GetCaptcha(ctx *gin.Context) {
 	// 1. 进行参数验证
 
@@ -125,7 +153,16 @@ func GetCaptcha(ctx *gin.Context) {
 	})
 }
 
-// SendPhoneCode: 给制定号码发送验证码
+// SendPhoneCode: 给指定号码发送验证码
+// @Summary 给指定号码发送验证码
+// @Description 1. 查看手机号码是否存在 2. 获取图形验证码 3. 给指定手机号码发送短信
+// @Tags Auth
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.ParamPhoneCode false "查询参数"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /auth/phone [post]
 func SendPhoneCode(ctx *gin.Context) {
 	// 1. 验证参数
 	p := new(models.ParamPhoneCode)
@@ -142,8 +179,16 @@ func SendPhoneCode(ctx *gin.Context) {
 	ResponseSuccess(ctx, nil)
 }
 
-// 使用:: MailHog -smtp-bind-addr 0.0.0.0:1028 -api-bind-addr 127.0.0.1:8026 -ui-bind-addr 127.0.0.1:8026 我这样就行了
 // SendEmailCode: 给指定邮箱发送验证码
+// @Summary 给指定邮箱发送验证码
+// @Description 1. 查看邮箱是否存在 2. 获取图形验证码 3. 给指定邮箱发送短信
+// @Tags Auth
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.ParamEmailCode false "查询参数"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /auth/email [post]
 func SendEmailCode(ctx *gin.Context) {
 	// 1. 验证参数
 	p := new(models.ParamEmailCode)
@@ -162,6 +207,15 @@ func SendEmailCode(ctx *gin.Context) {
 }
 
 // SignupUsingPhone: 使用手机号码进行注册
+// @Summary 使用手机号码进行注册
+// @Description 使用手机号码进行注册
+// @Tags Auth
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.ParamSignupUsingPhone false "查询参数"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /auth/signup/phone [post]
 func SignupUsingPhone(ctx *gin.Context) {
 	// 1. 进行参数的验证
 	p := new(models.ParamSignupUsingPhone)
@@ -186,6 +240,15 @@ func SignupUsingPhone(ctx *gin.Context) {
 }
 
 // SignupUsingEmail： 使用邮箱进行注册
+// @Summary 使用邮箱进行注册
+// @Description 使用邮箱进行注册
+// @Tags Auth
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.ParamSignUpUsingEmail false "查询参数"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /auth/signup/email [post]
 func SignupUsingEmail(ctx *gin.Context) {
 	//  1. 进行参数验证
 	p := new(models.ParamSignUpUsingEmail)

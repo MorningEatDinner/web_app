@@ -1,5 +1,7 @@
 package main
 
+// 使用:: MailHog -smtp-bind-addr 0.0.0.0:1028 -api-bind-addr 127.0.0.1:8026 -ui-bind-addr 127.0.0.1:8026 我这样就行了
+
 import (
 	"fmt"
 	"os"
@@ -17,6 +19,17 @@ import (
 	"go.uber.org/zap"
 )
 
+// @title 热点论坛
+// @version 1.0
+// @description 这是一个热点论坛项目， 能够根据当下热点来向用户展示论坛帖子
+// @termsOfService http://swagger.io/terms/
+// @contact.name xiaorui zheng
+// @contact.url http://www.swagger.io/support
+// @contact.email 1298453249@qq.com
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @host localhost:9000
+// @BasePath /api/v1
 func main() {
 
 	var rootCmd = &cobra.Command{

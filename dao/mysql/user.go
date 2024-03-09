@@ -3,7 +3,6 @@ package mysql
 import (
 	"crypto/md5"
 	"encoding/hex"
-
 	"github.com/xiaorui/web_app/models"
 	"gorm.io/gorm"
 )
@@ -103,16 +102,12 @@ func GetUserByID(id int64) (user *models.User, err error) {
 
 // IsPhoneExist： 验证手机号是否已经注册了
 func IsPhoneExist(phone string) (bool, error) {
-	// db.Model(&models.User{}).Where("")
 	var count int64
 	err := DB.Model(&models.User{}).Where("phone = ?", phone).Count(&count).Error
 	if err != nil {
 		return false, err
 	}
-	if count > 0 {
-		return true, ErrorPhoneExist
-	}
-	return false, nil
+	return count > 0, nil
 }
 
 // IsEmailExist: 验证邮箱是否注册了
@@ -122,10 +117,7 @@ func IsEmailExist(email string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if count > 0 {
-		return false, ErrorEmailExist
-	}
-	return true, err
+	return count > 0, nil
 }
 
 // SaveUser: 保存修改后的用户信息到数据库中

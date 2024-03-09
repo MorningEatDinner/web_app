@@ -10,6 +10,17 @@ import (
 	"go.uber.org/zap"
 )
 
+// CreatePostHandler: 创建帖子
+// @Summary 创建帖子
+// @Description 创建帖子
+// @Tags Post
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.Post true "参数"
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /post [post]
 func CreatePostHandler(ctx *gin.Context) {
 	// 1. 进行参数校验
 	p := new(models.Post)
@@ -36,6 +47,17 @@ func CreatePostHandler(ctx *gin.Context) {
 	ResponseSuccess(ctx, nil)
 }
 
+// GetPostHandler: 获取某个帖子的信息
+// @Summary 获取某个帖子的信息
+// @Description 获取某个帖子的信息
+// @Tags Post
+// @Accept application/json
+// @Produce application/json
+// @Param id path int true "Community ID"
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /post/{id} [get]
 func GetPostHandler(ctx *gin.Context) {
 	//1. 进行参数校验
 	id := ctx.Param("id") // 记住， 这里返回的值都是string类型的
@@ -130,7 +152,18 @@ func GetCommunityPostListHandler(ctx *gin.Context) {
 	ResponseSuccess(ctx, data)
 }
 
-// TODO:: 现在想要完成的是对上面两个接口进行融合
+// GetPostListHandler0: 获取帖子信息
+// @Summary 删除某个社区的信息
+// @Description 删除某个社区的信息
+// @Tags Post
+// @Accept application/json
+// @Produce application/json
+// @Param page query string true "页面码"
+// @Param size query string true "页面大小"
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /post/posts3 [get]
 func GetPostListHandler0(ctx *gin.Context) {
 	p := &models.ParamPostList{
 		Page:  1,
@@ -157,6 +190,16 @@ func GetPostListHandler0(ctx *gin.Context) {
 }
 
 // DeletePost: 删除post
+// @Summary 删除post
+// @Description 删除post
+// @Tags Post
+// @Accept application/json
+// @Produce application/json
+// @Param id path int true "Post ID"
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /post/{id} [delete]
 func DeletePost(ctx *gin.Context) {
 	// 1. 获取postid
 	postIDStr := ctx.Param("id")

@@ -10,6 +10,15 @@ import (
 )
 
 // CurrentUser: 获得当前用户信息
+// @Summary 获得当前用户信息
+// @Description 获得当前用户信息
+// @Tags User
+// @Accept application/json
+// @Produce application/json
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /user [get]
 func CurrentUser(ctx *gin.Context) {
 	userID, err := getCurrentUser(ctx)
 	if err != nil {
@@ -29,6 +38,16 @@ func CurrentUser(ctx *gin.Context) {
 }
 
 // UpdateProfile:更改用户个人信息
+// @Summary 更改用户个人信息
+// @Description 更改用户个人信息
+// @Tags User
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.ParamUpdateProfile false "查询参数"
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /user [put]
 func UpdateProfile(ctx *gin.Context) {
 	// 1. 进行参数验证
 	p := new(models.ParamUpdateProfile)
@@ -52,6 +71,16 @@ func UpdateProfile(ctx *gin.Context) {
 }
 
 // UpdateEmail: 更改邮箱
+// @Summary 更改邮箱
+// @Description 更改邮箱
+// @Tags User
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.ParamUpdateEmail false "查询参数"
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /user/email [put]
 func UpdateEmail(ctx *gin.Context) {
 	// 1. 接受参数: 验证码+新的邮箱
 	p := new(models.ParamUpdateEmail)
@@ -79,6 +108,16 @@ func UpdateEmail(ctx *gin.Context) {
 }
 
 // UpdatePhone: 更改手机号码
+// @Summary 更改手机号码
+// @Description 更改手机号码
+// @Tags User
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.ParamUpdatePhone false "查询参数"
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /user/phone [put]
 func UpdatePhone(ctx *gin.Context) {
 	// 1. 进行参数验证
 	p := new(models.ParamUpdatePhone)
@@ -108,6 +147,16 @@ func UpdatePhone(ctx *gin.Context) {
 }
 
 // UpdatePassword: 更新用户密码
+// @Summary 更新用户密码
+// @Description 更新用户密码
+// @Tags User
+// @Accept application/json
+// @Produce application/json
+// @Param object body models.ParamUpdatePassword false "查询参数"
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /user/password [put]
 func UpdatePassword(ctx *gin.Context) {
 	// 1. 进行参数验证
 	p := new(models.ParamUpdatePassword)
@@ -137,6 +186,16 @@ func UpdatePassword(ctx *gin.Context) {
 }
 
 // UpdateAvatar：更新用户头像
+// @Summary 更新用户头像
+// @Description 更新用户头像
+// @Tags User
+// @Accept application/json
+// @Produce application/json
+// @Param avatar formData file true "Avatar file"
+// @Param Authorization header string false "Bearer 用户令牌"
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]bool
+// @Router /user/avatar [put]
 func UpdateAvatar(ctx *gin.Context) {
 	// 1. 验证请求
 	p := new(models.ParamUpdateAvatar)
